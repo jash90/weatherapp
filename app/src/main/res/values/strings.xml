@@ -3,4 +3,13 @@
     <string name="appid">9f5b1ee98495098542066d82af570a7d</string>
     <string name="units">metric</string>
     <string name="degrees">°C</string>
+    <string name="wind">Wind</string>
+    <string name="pressure">Pressure</string>
+    <string name="cloud">Cloudiness</string>
+    <string name="humidity">Humidity</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="Geocords">Geo coords</string>
+    <string name="rain">Rain</string>
+    <string name="snow">Snow</string>
 </resources>

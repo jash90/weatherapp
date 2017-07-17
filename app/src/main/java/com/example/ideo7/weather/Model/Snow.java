@@ -1,10 +1,10 @@
 package com.example.ideo7.weather.Model;
 
 /**
- * Created by ideo7 on 14.07.2017.
+ * Created by ideo7 on 17.07.2017.
  */
 
-public class Rain {
+public class Snow {
     private Integer last3h;
 
     public Integer getLast3h() {
@@ -15,16 +15,16 @@ public class Rain {
         this.last3h = last3h;
     }
 
-    public Rain() {
+    public Snow() {
     }
 
-    public Rain(Integer last3h) {
+    public Snow(Integer last3h) {
         this.last3h = last3h;
     }
 
     @Override
     public String toString() {
-        return "Rain{" +
+        return "Snow{" +
                 "last3h=" + last3h +
                 '}';
     }

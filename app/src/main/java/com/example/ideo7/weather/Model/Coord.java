@@ -34,9 +34,9 @@ public class Coord {
 
     @Override
     public String toString() {
-        return "Coord{" +
-                "lon=" + lon +
-                ", lat=" + lat +
-                '}';
+        return "[" +
+                lat +
+                " , " + lon +
+                ']';
     }
 }

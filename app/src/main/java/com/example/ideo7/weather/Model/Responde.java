@@ -13,6 +13,7 @@ public class Responde {
     private String base;
     private Main main;
     private Wind wind;
+    private Snow snow;
     private Clouds clouds;
     private Rain rain;
     private Integer dt;
@@ -117,15 +118,24 @@ public class Responde {
         this.cod = cod;
     }
 
+    public Snow getSnow() {
+        return snow;
+    }
+
+    public void setSnow(Snow snow) {
+        this.snow = snow;
+    }
+
     public Responde() {
     }
 
-    public Responde(Coord coord, ArrayList<Weather> weather, String base, Main main, Wind wind, Clouds clouds, Rain rain, Integer dt, Sys sys, Integer id, String name, Integer cod) {
+    public Responde(Coord coord, ArrayList<Weather> weather, String base, Main main, Wind wind, Snow snow, Clouds clouds, Rain rain, Integer dt, Sys sys, Integer id, String name, Integer cod) {
         this.coord = coord;
         this.weather = weather;
         this.base = base;
         this.main = main;
         this.wind = wind;
+        this.snow = snow;
         this.clouds = clouds;
         this.rain = rain;
         this.dt = dt;
@@ -143,6 +153,7 @@ public class Responde {
                 ", base='" + base + '\'' +
                 ", main=" + main +
                 ", wind=" + wind +
+                ", snow=" + snow +
                 ", clouds=" + clouds +
                 ", rain=" + rain +
                 ", dt=" + dt +

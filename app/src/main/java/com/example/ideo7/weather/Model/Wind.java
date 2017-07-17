@@ -4,7 +4,7 @@ package com.example.ideo7.weather.Model;
  * Created by ideo7 on 14.07.2017.
  */
 
-class Wind {
+public class Wind {
     private Double speed;
     private Integer deg;
 
