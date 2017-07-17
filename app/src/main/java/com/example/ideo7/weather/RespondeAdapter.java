@@ -5,14 +5,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ideo7.weather.Model.Convert;
 import com.example.ideo7.weather.Model.Responde;
+
+import com.github.aakira.expandablelayout.ExpandableLayout;
+import com.kyleduo.switchbutton.SwitchButton;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -32,7 +41,7 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
     private ArrayList<Responde> list;
     private ArrayList<String> citys;
 
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.icon) ImageView icon;
         @BindView(R.id.city) TextView city;
         @BindView(R.id.temp) TextView temp;
@@ -51,6 +60,9 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
         @BindView(R.id.cloudLayout) LinearLayout cloudLayout;
         @BindView(R.id.rainLayout) LinearLayout rainLayout;
         @BindView(R.id.snowLayout) LinearLayout snowLayout;
+        @BindView(R.id.button) Button button;
+        @BindView(R.id.expandableLayout1) ExpandableLayout expandableLayout1;
+        @BindView(R.id.linearLayout) LinearLayout linearLayout;
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind( this,view);
@@ -90,7 +102,7 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
         }
         if (responde.getClouds()!=null){
                 holder.cloud.setText(String.format("%d %%",responde.getClouds().getAll()));
-                if (responde.getWeather().get(0).getId()>800&&responde.getWeather().get(0).getId()<900){
+                if (responde.getWeather().get(0).getId()>=800&&responde.getWeather().get(0).getId()<900){
                     holder.cloud.setText(Convert.convertWeatherCodeToDescription(responde.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
                 }
 
@@ -122,6 +134,18 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
         if  (responde.getMain().getPressure()!=null){
             holder.pressure.setText(String.format("%d hpa",responde.getMain().getPressure()));
         }
+        holder.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.expandableLayout1.toggle();
+            }
+        });
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(),"szczegóły",Toast.LENGTH_SHORT).show();
+            }
+        });
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sunrise = new SimpleDateFormat("HH:mm");
         sunrise.setTimeZone(cal.getTimeZone());
@@ -149,6 +173,7 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
                 {
                     citys.remove(holder.city.getText().toString());
                 }
+                Log.d("citys",citys.toString());
             }
         });
         Picasso.with(holder.itemView.getContext())

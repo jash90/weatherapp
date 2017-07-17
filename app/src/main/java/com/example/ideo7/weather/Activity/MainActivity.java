@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
                     respondes.add(response.body());
                     respondeAdapter.notifyDataSetChanged();
                     recyclerView.refreshDrawableState();
-                    citys.add(editText.getText().toString());
                 }
             }
 
