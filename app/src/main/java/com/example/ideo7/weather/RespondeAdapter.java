@@ -82,7 +82,7 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row, parent, false);
+                .inflate(R.layout.weather_row, parent, false);
         ButterKnife.bind(this, itemView);
         return new MyViewHolder(itemView);
     }
