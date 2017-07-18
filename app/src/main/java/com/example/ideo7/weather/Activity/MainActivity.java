@@ -1,6 +1,5 @@
 package com.example.ideo7.weather.Activity;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,18 +15,15 @@ import android.widget.Toast;
 
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
-import com.example.ideo7.weather.Model.Responde;
+import com.example.ideo7.weather.Model.WeatherResponse;
 import com.example.ideo7.weather.R;
 import com.example.ideo7.weather.RespondeAdapter;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -37,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.searchEditText) EditText editText;
     @BindView(R.id.searchButton) Button button;
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
-    private ArrayList<Responde> respondes;
+    private ArrayList<WeatherResponse> weatherResponses;
     private RespondeAdapter respondeAdapter;
     private ArrayList<String> citys;
     private ArrayList<String> favoritescitys;
@@ -48,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        respondes = new ArrayList<>();
+        weatherResponses = new ArrayList<>();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,27 +74,26 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        respondeAdapter = new RespondeAdapter(respondes,favoritescitys);
+        respondeAdapter = new RespondeAdapter(weatherResponses,favoritescitys);
         recyclerView.setAdapter(respondeAdapter);
-
-
     }
+
     public void searchWeather(String city)
     {
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<Responde> call = openWeather.getWeather(city,getResources().getString(R.string.appid),getResources().getString(R.string.units));
-        call.enqueue(new Callback<Responde>() {
+        Call<WeatherResponse> call = openWeather.getWeather(city,getResources().getString(R.string.appid),getResources().getString(R.string.units));
+        call.enqueue(new Callback<WeatherResponse>() {
             @Override
-            public void onResponse(Call<Responde> call, retrofit2.Response<Responde> response) {
+            public void onResponse(Call<WeatherResponse> call, retrofit2.Response<WeatherResponse> response) {
                 if (response.isSuccessful()){
-                    respondes.add(response.body());
+                    weatherResponses.add(response.body());
                     respondeAdapter.notifyDataSetChanged();
                     recyclerView.refreshDrawableState();
                 }
             }
 
             @Override
-            public void onFailure(Call<Responde> call, Throwable t) {
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {
                 Log.d("error",t.getLocalizedMessage());
             }
         });

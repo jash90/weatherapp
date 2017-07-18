@@ -5,7 +5,7 @@ package com.example.ideo7.weather.Model;
  */
 
 public class Convert {
-    public static String convertDegreeToCardinalDirection(int directionInDegrees){
+    public static String convertDegreeToCardinalDirection(Double directionInDegrees){
         String cardinalDirection = "0";
         if( (directionInDegrees >= 348.75) && (directionInDegrees <= 360) ||
                 (directionInDegrees >= 0) && (directionInDegrees <= 11.25)    ){

@@ -1,27 +1,25 @@
 package com.example.ideo7.weather;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.ideo7.weather.Activity.TodayActivity;
 import com.example.ideo7.weather.Model.Convert;
-import com.example.ideo7.weather.Model.Responde;
+import com.example.ideo7.weather.Model.WeatherResponse;
 
 import com.github.aakira.expandablelayout.ExpandableLayout;
-import com.kyleduo.switchbutton.SwitchButton;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -38,8 +36,10 @@ import butterknife.ButterKnife;
 
 public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyViewHolder> {
 
-    private ArrayList<Responde> list;
+    private ArrayList<WeatherResponse> list;
     private ArrayList<String> citys;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedPreferencesEditor;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.icon) ImageView icon;
@@ -66,12 +66,14 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind( this,view);
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+            sharedPreferencesEditor = sharedPreferences.edit();
         }
     }
 
 
-    public RespondeAdapter(ArrayList<Responde> respondeArrayList, ArrayList<String> citys) {
-        this.list = respondeArrayList;
+    public RespondeAdapter(ArrayList<WeatherResponse> weatherResponseArrayList, ArrayList<String> citys) {
+        this.list = weatherResponseArrayList;
         this.citys=citys;
     }
 
@@ -87,52 +89,52 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final Responde responde = list.get(position);
-        holder.city.setText(responde.getName());
-        holder.temp.setText(Math.round(responde.getMain().getTemp())+holder.itemView.getContext().getResources().getString(R.string.degrees));
-        if (responde.getWind()!=null) {
-            holder.wind.setText(String.format("%.2f m/s", responde.getWind().getSpeed()));
-            if (responde.getWind().getDeg()!=null){
-                holder.wind.setText(holder.wind.getText().toString()+String.format(" %s (%d)", Convert.convertDegreeToCardinalDirection(responde.getWind().getDeg()),responde.getWind().getDeg()));
+        final WeatherResponse weatherResponse = list.get(position);
+        holder.city.setText(weatherResponse.getName());
+        holder.temp.setText(Math.round(weatherResponse.getMain().getTemp())+holder.itemView.getContext().getResources().getString(R.string.degrees));
+        if (weatherResponse.getWind()!=null) {
+            holder.wind.setText(String.format("%.2f m/s", weatherResponse.getWind().getSpeed()));
+            if (weatherResponse.getWind().getDeg()!=null){
+                holder.wind.setText(holder.wind.getText().toString()+String.format(" %s (%f)", Convert.convertDegreeToCardinalDirection(weatherResponse.getWind().getDeg()), weatherResponse.getWind().getDeg()));
             }
 
         }
         else{
             holder.windLayout.setVisibility(View.GONE);
         }
-        if (responde.getClouds()!=null){
-                holder.cloud.setText(String.format("%d %%",responde.getClouds().getAll()));
-                if (responde.getWeather().get(0).getId()>=800&&responde.getWeather().get(0).getId()<900){
-                    holder.cloud.setText(Convert.convertWeatherCodeToDescription(responde.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
+        if (weatherResponse.getClouds()!=null){
+                holder.cloud.setText(String.format("%d %%", weatherResponse.getClouds().getAll()));
+                if (weatherResponse.getWeather().get(0).getId()>=800&& weatherResponse.getWeather().get(0).getId()<900){
+                    holder.cloud.setText(Convert.convertWeatherCodeToDescription(weatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
                 }
 
         }
         else{
           holder.cloudLayout.setVisibility(View.GONE);
         }
-        if (responde.getRain()!=null){
-            holder.rain.setText(responde.getRain().toString());
-            if (responde.getWeather().get(0).getId()>=300&&responde.getWeather().get(0).getId()<400){
-                holder.rain.setText(Convert.convertWeatherCodeToDescription(responde.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
+        if (weatherResponse.getRain()!=null){
+            holder.rain.setText(weatherResponse.getRain().toString());
+            if (weatherResponse.getWeather().get(0).getId()>=300&& weatherResponse.getWeather().get(0).getId()<400){
+                holder.rain.setText(Convert.convertWeatherCodeToDescription(weatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
             }
         }
         else{
             holder.rainLayout.setVisibility(View.GONE);
         }
-        if (responde.getSnow()!=null){
-            holder.snow.setText(responde.getRain().toString());
-            if (responde.getWeather().get(0).getId()>=600&&responde.getWeather().get(0).getId()<700){
-                holder.snow.setText(Convert.convertWeatherCodeToDescription(responde.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
+        if (weatherResponse.getSnow()!=null){
+            holder.snow.setText(weatherResponse.getRain().toString());
+            if (weatherResponse.getWeather().get(0).getId()>=600&& weatherResponse.getWeather().get(0).getId()<700){
+                holder.snow.setText(Convert.convertWeatherCodeToDescription(weatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
             }
         }
         else{
             holder.snowLayout.setVisibility(View.GONE);
         }
-        if (responde.getMain().getHumidity()!=null){
-            holder.humidity.setText(String.format("%d %%",responde.getMain().getHumidity()));
+        if (weatherResponse.getMain().getHumidity()!=null){
+            holder.humidity.setText(String.format("%d %%", weatherResponse.getMain().getHumidity()));
         }
-        if  (responde.getMain().getPressure()!=null){
-            holder.pressure.setText(String.format("%d hpa",responde.getMain().getPressure()));
+        if  (weatherResponse.getMain().getPressure()!=null){
+            holder.pressure.setText(String.format("%f hpa", weatherResponse.getMain().getPressure()));
         }
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +145,9 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(),"szczegóły",Toast.LENGTH_SHORT).show();
+               Intent intent = new Intent(holder.itemView.getContext(), TodayActivity.class);
+               intent.putExtra("city", weatherResponse.getName());
+               holder.itemView.getContext().startActivity(intent);
             }
         });
         Calendar cal = Calendar.getInstance();
@@ -151,12 +155,12 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
         sunrise.setTimeZone(cal.getTimeZone());
         SimpleDateFormat sunset = new SimpleDateFormat("HH:mm");
         sunset.setTimeZone(cal.getTimeZone());
-        holder.sunrise.setText(sunrise.format(new Date(responde.getSys().getSunrise()*1000L)));
-        Log.d("sunrise",responde.getSys().getSunrise().toString());
-        holder.sunset.setText(sunset.format(new Date(responde.getSys().getSunset()*1000L)));
-        holder.geocords.setText(responde.getCoord().toString());
+        holder.sunrise.setText(sunrise.format(new Date(weatherResponse.getSys().getSunrise()*1000L)));
+        Log.d("sunrise", weatherResponse.getSys().getSunrise().toString());
+        holder.sunset.setText(sunset.format(new Date(weatherResponse.getSys().getSunset()*1000L)));
+        holder.geocords.setText(weatherResponse.getCoord().toString());
         holder.date.setText(new SimpleDateFormat("HH:mm dd.MM.yyyy").format(new Date()));
-        if (!citys.contains(responde.getName())){
+        if (!citys.contains(weatherResponse.getName())){
             holder.checked.setChecked(false);
         }
         else {
@@ -177,11 +181,12 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
             }
         });
         Picasso.with(holder.itemView.getContext())
-                .load(String.format("https://openweathermap.org/img/w/%s.png",responde.getWeather().get(0).getIcon()))
+                .load(String.format("https://openweathermap.org/img/w/%s.png", weatherResponse.getWeather().get(0).getIcon()))
                 .resize(100, 100)
                 .into(holder.icon);
         //holder.icon.setImageURI(Uri.parse();
-     //   Log.d("error",String.format("https://openweathermap.org/img/w/%s.png",responde.getWeather().get(0).getIcon()));
+     //   Log.d("error",String.format("https://openweathermap.org/img/w/%s.png",weatherResponse.getWeather().get(0).getIcon()));
+
     }
 
         @Override

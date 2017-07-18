@@ -1,5 +1,7 @@
 package com.example.ideo7.weather.API;
 
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -11,8 +13,6 @@ import okhttp3.Response;
  */
 
 public class AuthenticationInterceptor implements Interceptor {
-
-
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request original = chain.request();
