@@ -2,7 +2,7 @@
     <string name="app_name">Weather</string>
     <string name="appid">9f5b1ee98495098542066d82af570a7d</string>
     <string name="units">metric</string>
-    <string name="degrees">°C</string>
+    <string name="degrees"> °C</string>
     <string name="wind">Wind</string>
     <string name="pressure">Pressure</string>
     <string name="cloud">Cloudiness</string>

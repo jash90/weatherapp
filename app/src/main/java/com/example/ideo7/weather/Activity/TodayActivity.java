@@ -7,6 +7,9 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.WindowManager;
@@ -15,9 +18,11 @@ import android.widget.TextView;
 
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
+import com.example.ideo7.weather.DailyWeatherAdapter;
 import com.example.ideo7.weather.Model.DailyWeather;
 import com.example.ideo7.weather.Model.ForecastResponse;
 import com.example.ideo7.weather.R;
+import com.example.ideo7.weather.RespondeAdapter;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
@@ -39,6 +44,7 @@ import com.github.mikephil.charting.renderer.XAxisRenderer;
 import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,6 +60,9 @@ import retrofit2.Response;
 public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekBarChangeListener,
         OnChartGestureListener, OnChartValueSelectedListener {
     @BindView(R.id.chart1) LineChart lineChart;
+    @BindView(R.id.recyclerView) RecyclerView recyclerView;
+    ArrayList<DailyWeather> dailyWeathers;
+    DailyWeatherAdapter adapter;
     private String city;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +90,12 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
         lineChart.setScaleEnabled(true);
         // lineChart.setScaleXEnabled(true);
         // lineChart.setScaleYEnabled(true);
-
+        dailyWeathers = new ArrayList<>();
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        adapter = new DailyWeatherAdapter(dailyWeathers);
+        recyclerView.setAdapter(adapter);
         // if disabled, scaling can be done on x- and y-axis separately
         lineChart.setPinchZoom(true);
 
@@ -109,24 +123,11 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
 
       //  Typeface tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
 
-        LimitLine ll1 = new LimitLine(150f, "Upper Limit");
-        ll1.setLineWidth(4f);
-        ll1.enableDashedLine(10f, 10f, 0f);
-        ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-        ll1.setTextSize(10f);
-       // ll1.setTypeface(tf);
 
-        LimitLine ll2 = new LimitLine(-30f, "Lower Limit");
-        ll2.setLineWidth(4f);
-        ll2.enableDashedLine(10f, 10f, 0f);
-        ll2.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
-        ll2.setTextSize(10f);
       //  ll2.setTypeface(tf);
 
         YAxis leftAxis = lineChart.getAxisLeft();
         leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-        leftAxis.addLimitLine(ll1);
-        leftAxis.addLimitLine(ll2);
         leftAxis.setAxisMaximum(200f);
         leftAxis.setAxisMinimum(-50f);
         //leftAxis.setYOffset(20f);
@@ -169,14 +170,26 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
         call.enqueue(new Callback<ForecastResponse>() {
             @Override
             public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
-                List<DailyWeather> list = response.body().getList();
+                ArrayList<DailyWeather> list = (ArrayList<DailyWeather>) response.body().getList();
+                for (DailyWeather dailyWeather :list) {
+                    dailyWeathers.add(dailyWeather);
+                    adapter.notifyDataSetChanged();
+                }
                 ArrayList<Entry> values = new ArrayList<Entry>();
                 ArrayList<String> labels = new ArrayList<String>();
+                Double max = list.get(0).getMain().getTemp();
+                Double min = list.get(0).getMain().getTemp();
                 Calendar cal = Calendar.getInstance();
-                SimpleDateFormat format = new SimpleDateFormat("HH:mm dd.MM");
+                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                 format.setTimeZone(cal.getTimeZone());
                 for (int i = 0; i < list.size(); i++) {
                     values.add(new Entry(i, list.get(i).getMain().getTemp().floatValue(), getResources().getDrawable(R.drawable.star)));
+                    if (max<list.get(i).getMain().getTemp()){
+                        max=list.get(i).getMain().getTemp();
+                    }
+                    if (min>list.get(i).getMain().getTemp()){
+                        min=list.get(i).getMain().getTemp();
+                    }
                     labels.add(format.format(new Date(list.get(i).getDt()*1000L)));
                 }
                 Log.d("log",labels.toString());
@@ -189,7 +202,7 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
                     lineChart.getData().notifyDataChanged();
                     lineChart.notifyDataSetChanged();
                 } else {
-                    set1 = new LineDataSet(values, "DataSet 1");
+                    set1 = new LineDataSet(values, "Temperature");
 
                       set1.setDrawIcons(false);
 
@@ -198,11 +211,14 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
                     set1.setColor(Color.BLACK);
                     set1.setCircleColor(Color.BLACK);
                     set1.setLineWidth(1f);
+                    set1.setDrawValues(false);
                     set1.setCircleRadius(3f);
                     set1.setDrawCircleHole(false);
                     set1.setValueTextSize(9f);
+                    //lineChart.getXAxis().setAxisMaximum(10);
+                    //lineChart.getXAxis().setXOffset(100);
                    // set1.setDrawFilled(true);
-                    //set1.setFormLineWidth(1f);
+                    set1.setFormLineWidth(1f);
                     //set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
                     //set1.setFormSize(15.f);
 
@@ -220,6 +236,8 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
                     LineData data = new LineData(dataSets);
                     lineChart.getXAxis().setValueFormatter(new LabelFormatter(labels));
                     lineChart.setData(data);
+                    lineChart.getAxisLeft().setAxisMaximum(50);
+                    lineChart.getAxisLeft().setAxisMinimum(-50);
                 }
             }
 
