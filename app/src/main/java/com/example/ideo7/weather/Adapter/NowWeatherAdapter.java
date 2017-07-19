@@ -83,7 +83,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.weather_row, parent, false);
+                .inflate(R.layout.now_weather_row, parent, false);
         ButterKnife.bind(this, itemView);
         return new MyViewHolder(itemView);
     }
@@ -96,7 +96,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         if (forecastNowWeatherResponse.getWind()!=null) {
             holder.wind.setText(String.format("%.2f m/s", forecastNowWeatherResponse.getWind().getSpeed()));
             if (forecastNowWeatherResponse.getWind().getDeg()!=null){
-                holder.wind.setText(holder.wind.getText().toString()+String.format(" %s (%f)", Convert.convertDegreeToCardinalDirection(forecastNowWeatherResponse.getWind().getDeg()), forecastNowWeatherResponse.getWind().getDeg()));
+                holder.wind.setText(holder.wind.getText().toString()+String.format(" %s (%.0f)", Convert.convertDegreeToCardinalDirection(forecastNowWeatherResponse.getWind().getDeg()), forecastNowWeatherResponse.getWind().getDeg()));
             }
 
         }
@@ -114,7 +114,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
           holder.cloudLayout.setVisibility(View.GONE);
         }
         if (forecastNowWeatherResponse.getRain()!=null){
-            holder.rain.setText(forecastNowWeatherResponse.getRain().toString());
+            holder.rain.setText(String.format("%.2f mm",forecastNowWeatherResponse.getRain().getLast3h()));
             if (forecastNowWeatherResponse.getWeather().get(0).getId()>=300&& forecastNowWeatherResponse.getWeather().get(0).getId()<400){
                 holder.rain.setText(Convert.convertWeatherCodeToDescription(forecastNowWeatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
             }
@@ -123,7 +123,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
             holder.rainLayout.setVisibility(View.GONE);
         }
         if (forecastNowWeatherResponse.getSnow()!=null){
-            holder.snow.setText(forecastNowWeatherResponse.getRain().toString());
+            holder.snow.setText(String.format("%.2f mm",forecastNowWeatherResponse.getSnow().getLast3h()));
             if (forecastNowWeatherResponse.getWeather().get(0).getId()>=600&& forecastNowWeatherResponse.getWeather().get(0).getId()<700){
                 holder.snow.setText(Convert.convertWeatherCodeToDescription(forecastNowWeatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
             }
@@ -135,7 +135,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
             holder.humidity.setText(String.format("%d %%", forecastNowWeatherResponse.getMain().getHumidity()));
         }
         if  (forecastNowWeatherResponse.getMain().getPressure()!=null){
-            holder.pressure.setText(String.format("%f hpa", forecastNowWeatherResponse.getMain().getPressure()));
+            holder.pressure.setText(String.format("%.0f hpa", forecastNowWeatherResponse.getMain().getPressure()));
         }
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override

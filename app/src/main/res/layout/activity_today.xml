@@ -3,10 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <com.github.mikephil.charting.charts.LineChart
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Weather and forecasts in London, GB"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:id="@+id/title"/>
+    <com.github.mikephil.charting.charts.CombinedChart
         android:id="@+id/chart1"
         android:layout_width="match_parent"
-        android:layout_height="150dp"/>
+        android:layout_height="150dp" />
 
 
     <android.support.v7.widget.RecyclerView
@@ -16,7 +24,14 @@
         android:id="@+id/hourlyWeather">
 
     </android.support.v7.widget.RecyclerView>
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="13 day weather forecast"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:id="@+id/titledaily"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

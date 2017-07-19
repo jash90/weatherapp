@@ -30,6 +30,9 @@ public class MyMarkerView extends MarkerView {
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
 
+
+
+
         if (e instanceof CandleEntry) {
 
             CandleEntry ce = (CandleEntry) e;

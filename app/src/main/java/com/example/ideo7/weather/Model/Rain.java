@@ -1,24 +1,28 @@
 package com.example.ideo7.weather.Model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by ideo7 on 14.07.2017.
  */
 
 public class Rain {
-    private Integer last3h;
+    @SerializedName("3h")
+    private Double last3h;
 
-    public Integer getLast3h() {
+    public Double getLast3h() {
         return last3h;
     }
 
-    public void setLast3h(Integer last3h) {
+    public void setLast3h(Double last3h) {
         this.last3h = last3h;
     }
 
     public Rain() {
     }
 
-    public Rain(Integer last3h) {
+    public Rain(Double last3h) {
         this.last3h = last3h;
     }
 

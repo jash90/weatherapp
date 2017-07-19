@@ -11,6 +11,8 @@ public class ForecastHourlyResponse {
     private Double message;
     private Integer cnt;
     private List<HourlyWeather> list;
+    private City city;
+    private String country;
 
     public Integer getCod() {
         return cod;
@@ -44,14 +46,32 @@ public class ForecastHourlyResponse {
         this.list = list;
     }
 
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     public ForecastHourlyResponse() {
     }
 
-    public ForecastHourlyResponse(Integer cod, Double message, Integer cnt, List<HourlyWeather> list) {
+    public ForecastHourlyResponse(Integer cod, Double message, Integer cnt, List<HourlyWeather> list, City city, String country) {
         this.cod = cod;
         this.message = message;
         this.cnt = cnt;
         this.list = list;
+        this.city = city;
+        this.country = country;
     }
 
     @Override
@@ -61,6 +81,8 @@ public class ForecastHourlyResponse {
                 ", message=" + message +
                 ", cnt=" + cnt +
                 ", list=" + list +
+                ", city=" + city +
+                ", country='" + country + '\'' +
                 '}';
     }
 }

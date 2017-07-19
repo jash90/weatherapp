@@ -5,20 +5,20 @@ package com.example.ideo7.weather.Model;
  */
 
 public class Snow {
-    private Integer last3h;
+    private Double last3h;
 
-    public Integer getLast3h() {
+    public Double getLast3h() {
         return last3h;
     }
 
-    public void setLast3h(Integer last3h) {
+    public void setLast3h(Double last3h) {
         this.last3h = last3h;
     }
 
     public Snow() {
     }
 
-    public Snow(Integer last3h) {
+    public Snow(Double last3h) {
         this.last3h = last3h;
     }
 

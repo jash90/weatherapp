@@ -1,16 +1,20 @@
 package com.example.ideo7.weather.Adapter;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.ideo7.weather.Model.*;
 import com.example.ideo7.weather.R;
 import com.squareup.picasso.Picasso;
 
+import org.joda.time.DateTime;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
@@ -37,6 +41,7 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
         @BindView(R.id.description) TextView description;
         @BindView(R.id.wind) TextView wind;
         @BindView(R.id.cloud) TextView cloud;
+        @BindView(R.id.layout) LinearLayout linearLayout;
         public MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
@@ -71,7 +76,17 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
         holder.cloud.setText(String.format("clouds: %d %%,  %.2f hpa",dailyWeather.getClouds(),dailyWeather.getPressure()));
         holder.wind.setText(String.format("%.2f m/s",dailyWeather.getSpeed()));
         holder.description.setText(dailyWeather.getWeather().get(0).getDescription());
-        holder.today.setVisibility(new Date().equals(new Date(dailyWeather.getDt()*1000L))?View.VISIBLE:View.INVISIBLE);
+        DateTime dateTime = new DateTime(dailyWeather.getDt()*1000L);
+        Log.d("datetime1",dateTime.toLocalDate().toString());
+        Log.d("datetime2", String.valueOf(DateTime.now().toLocalDate()));
+        if (new DateTime(dailyWeather.getDt()*1000L).toLocalDate().compareTo(DateTime.now().toLocalDate())==0){
+            holder.today.setVisibility(View.VISIBLE);
+            holder.linearLayout.setBackgroundColor(Color.rgb(221,221,221));
+        }
+        else{
+            holder.today.setVisibility(View.INVISIBLE);
+        }
+
 
     }
 
