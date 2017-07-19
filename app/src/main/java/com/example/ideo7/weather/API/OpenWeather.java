@@ -1,7 +1,8 @@
 package com.example.ideo7.weather.API;
 
-import com.example.ideo7.weather.Model.ForecastResponse;
-import com.example.ideo7.weather.Model.WeatherResponse;
+import com.example.ideo7.weather.Model.ForecastDailyResponse;
+import com.example.ideo7.weather.Model.ForecastHourlyResponse;
+import com.example.ideo7.weather.Model.ForecastNowWeatherResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -14,8 +15,10 @@ import retrofit2.http.Query;
 public interface OpenWeather {
 
     @GET("weather")
-    Call<WeatherResponse> getWeather(@Query("q") String q, @Query("appid") String appid, @Query("units") String units);
+    Call<ForecastNowWeatherResponse> getWeather(@Query("q") String q, @Query("appid") String appid, @Query("units") String units);
     @GET("forecast")
-    Call<ForecastResponse> getForecast(@Query("q") String q, @Query("appid") String appid, @Query("units") String units,@Query("cnt") Integer cnt);
+    Call<ForecastHourlyResponse> getForecast(@Query("q") String q, @Query("appid") String appid, @Query("units") String units, @Query("cnt") Integer cnt);
+    @GET("forecast/daily")
+    Call<ForecastDailyResponse> getForecastDaily(@Query("q") String q, @Query("appid") String appid, @Query("units") String units);
 
 }

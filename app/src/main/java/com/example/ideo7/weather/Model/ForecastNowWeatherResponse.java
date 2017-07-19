@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Created by ideo7 on 14.07.2017.
  */
 
-public class Responde {
+public class ForecastNowWeatherResponse {
     private Coord coord;
     private ArrayList<Weather> weather;
     private String base;
@@ -126,10 +126,10 @@ public class Responde {
         this.snow = snow;
     }
 
-    public Responde() {
+    public ForecastNowWeatherResponse() {
     }
 
-    public Responde(Coord coord, ArrayList<Weather> weather, String base, Main main, Wind wind, Snow snow, Clouds clouds, Rain rain, Integer dt, Sys sys, Integer id, String name, Integer cod) {
+    public ForecastNowWeatherResponse(Coord coord, ArrayList<Weather> weather, String base, Main main, Wind wind, Snow snow, Clouds clouds, Rain rain, Integer dt, Sys sys, Integer id, String name, Integer cod) {
         this.coord = coord;
         this.weather = weather;
         this.base = base;
@@ -147,7 +147,7 @@ public class Responde {
 
     @Override
     public String toString() {
-        return "Responde{" +
+        return "ForecastNowWeatherResponse{" +
                 "coord=" + coord +
                 ", weather=" + weather +
                 ", base='" + base + '\'' +

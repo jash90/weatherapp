@@ -1,4 +1,4 @@
-package com.example.ideo7.weather;
+package com.example.ideo7.weather.Adapter;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,8 +17,9 @@ import android.widget.TextView;
 
 import com.example.ideo7.weather.Activity.TodayActivity;
 import com.example.ideo7.weather.Model.Convert;
-import com.example.ideo7.weather.Model.WeatherResponse;
+import com.example.ideo7.weather.Model.ForecastNowWeatherResponse;
 
+import com.example.ideo7.weather.R;
 import com.github.aakira.expandablelayout.ExpandableLayout;
 import com.squareup.picasso.Picasso;
 
@@ -34,9 +35,9 @@ import butterknife.ButterKnife;
  * Created by ideo7 on 14.07.2017.
  */
 
-public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyViewHolder> {
+public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.MyViewHolder> {
 
-    private ArrayList<WeatherResponse> list;
+    private ArrayList<ForecastNowWeatherResponse> list;
     private ArrayList<String> citys;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
@@ -72,8 +73,8 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
     }
 
 
-    public RespondeAdapter(ArrayList<WeatherResponse> weatherResponseArrayList, ArrayList<String> citys) {
-        this.list = weatherResponseArrayList;
+    public NowWeatherAdapter(ArrayList<ForecastNowWeatherResponse> forecastNowWeatherResponseArrayList, ArrayList<String> citys) {
+        this.list = forecastNowWeatherResponseArrayList;
         this.citys=citys;
     }
 
@@ -89,52 +90,52 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final WeatherResponse weatherResponse = list.get(position);
-        holder.city.setText(weatherResponse.getName());
-        holder.temp.setText(Math.round(weatherResponse.getMain().getTemp())+holder.itemView.getContext().getResources().getString(R.string.degrees));
-        if (weatherResponse.getWind()!=null) {
-            holder.wind.setText(String.format("%.2f m/s", weatherResponse.getWind().getSpeed()));
-            if (weatherResponse.getWind().getDeg()!=null){
-                holder.wind.setText(holder.wind.getText().toString()+String.format(" %s (%f)", Convert.convertDegreeToCardinalDirection(weatherResponse.getWind().getDeg()), weatherResponse.getWind().getDeg()));
+        final ForecastNowWeatherResponse forecastNowWeatherResponse = list.get(position);
+        holder.city.setText(forecastNowWeatherResponse.getName());
+        holder.temp.setText(Math.round(forecastNowWeatherResponse.getMain().getTemp())+holder.itemView.getContext().getResources().getString(R.string.degrees));
+        if (forecastNowWeatherResponse.getWind()!=null) {
+            holder.wind.setText(String.format("%.2f m/s", forecastNowWeatherResponse.getWind().getSpeed()));
+            if (forecastNowWeatherResponse.getWind().getDeg()!=null){
+                holder.wind.setText(holder.wind.getText().toString()+String.format(" %s (%f)", Convert.convertDegreeToCardinalDirection(forecastNowWeatherResponse.getWind().getDeg()), forecastNowWeatherResponse.getWind().getDeg()));
             }
 
         }
         else{
             holder.windLayout.setVisibility(View.GONE);
         }
-        if (weatherResponse.getClouds()!=null){
-                holder.cloud.setText(String.format("%d %%", weatherResponse.getClouds().getAll()));
-                if (weatherResponse.getWeather().get(0).getId()>=800&& weatherResponse.getWeather().get(0).getId()<900){
-                    holder.cloud.setText(Convert.convertWeatherCodeToDescription(weatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
+        if (forecastNowWeatherResponse.getClouds()!=null){
+                holder.cloud.setText(String.format("%d %%", forecastNowWeatherResponse.getClouds().getAll()));
+                if (forecastNowWeatherResponse.getWeather().get(0).getId()>=800&& forecastNowWeatherResponse.getWeather().get(0).getId()<900){
+                    holder.cloud.setText(Convert.convertWeatherCodeToDescription(forecastNowWeatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
                 }
 
         }
         else{
           holder.cloudLayout.setVisibility(View.GONE);
         }
-        if (weatherResponse.getRain()!=null){
-            holder.rain.setText(weatherResponse.getRain().toString());
-            if (weatherResponse.getWeather().get(0).getId()>=300&& weatherResponse.getWeather().get(0).getId()<400){
-                holder.rain.setText(Convert.convertWeatherCodeToDescription(weatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
+        if (forecastNowWeatherResponse.getRain()!=null){
+            holder.rain.setText(forecastNowWeatherResponse.getRain().toString());
+            if (forecastNowWeatherResponse.getWeather().get(0).getId()>=300&& forecastNowWeatherResponse.getWeather().get(0).getId()<400){
+                holder.rain.setText(Convert.convertWeatherCodeToDescription(forecastNowWeatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
             }
         }
         else{
             holder.rainLayout.setVisibility(View.GONE);
         }
-        if (weatherResponse.getSnow()!=null){
-            holder.snow.setText(weatherResponse.getRain().toString());
-            if (weatherResponse.getWeather().get(0).getId()>=600&& weatherResponse.getWeather().get(0).getId()<700){
-                holder.snow.setText(Convert.convertWeatherCodeToDescription(weatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
+        if (forecastNowWeatherResponse.getSnow()!=null){
+            holder.snow.setText(forecastNowWeatherResponse.getRain().toString());
+            if (forecastNowWeatherResponse.getWeather().get(0).getId()>=600&& forecastNowWeatherResponse.getWeather().get(0).getId()<700){
+                holder.snow.setText(Convert.convertWeatherCodeToDescription(forecastNowWeatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
             }
         }
         else{
             holder.snowLayout.setVisibility(View.GONE);
         }
-        if (weatherResponse.getMain().getHumidity()!=null){
-            holder.humidity.setText(String.format("%d %%", weatherResponse.getMain().getHumidity()));
+        if (forecastNowWeatherResponse.getMain().getHumidity()!=null){
+            holder.humidity.setText(String.format("%d %%", forecastNowWeatherResponse.getMain().getHumidity()));
         }
-        if  (weatherResponse.getMain().getPressure()!=null){
-            holder.pressure.setText(String.format("%f hpa", weatherResponse.getMain().getPressure()));
+        if  (forecastNowWeatherResponse.getMain().getPressure()!=null){
+            holder.pressure.setText(String.format("%f hpa", forecastNowWeatherResponse.getMain().getPressure()));
         }
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +147,7 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
             @Override
             public void onClick(View v) {
                Intent intent = new Intent(holder.itemView.getContext(), TodayActivity.class);
-               intent.putExtra("city", weatherResponse.getName());
+               intent.putExtra("city", forecastNowWeatherResponse.getName());
                holder.itemView.getContext().startActivity(intent);
             }
         });
@@ -155,12 +156,12 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
         sunrise.setTimeZone(cal.getTimeZone());
         SimpleDateFormat sunset = new SimpleDateFormat("HH:mm");
         sunset.setTimeZone(cal.getTimeZone());
-        holder.sunrise.setText(sunrise.format(new Date(weatherResponse.getSys().getSunrise()*1000L)));
-        Log.d("sunrise", weatherResponse.getSys().getSunrise().toString());
-        holder.sunset.setText(sunset.format(new Date(weatherResponse.getSys().getSunset()*1000L)));
-        holder.geocords.setText(weatherResponse.getCoord().toString());
+        holder.sunrise.setText(sunrise.format(new Date(forecastNowWeatherResponse.getSys().getSunrise()*1000L)));
+        Log.d("sunrise", forecastNowWeatherResponse.getSys().getSunrise().toString());
+        holder.sunset.setText(sunset.format(new Date(forecastNowWeatherResponse.getSys().getSunset()*1000L)));
+        holder.geocords.setText(forecastNowWeatherResponse.getCoord().toString());
         holder.date.setText(new SimpleDateFormat("HH:mm dd.MM.yyyy").format(new Date()));
-        if (!citys.contains(weatherResponse.getName())){
+        if (!citys.contains(forecastNowWeatherResponse.getName())){
             holder.checked.setChecked(false);
         }
         else {
@@ -181,11 +182,11 @@ public class RespondeAdapter extends RecyclerView.Adapter<RespondeAdapter.MyView
             }
         });
         Picasso.with(holder.itemView.getContext())
-                .load(String.format("https://openweathermap.org/img/w/%s.png", weatherResponse.getWeather().get(0).getIcon()))
+                .load(String.format("https://openweathermap.org/img/w/%s.png", forecastNowWeatherResponse.getWeather().get(0).getIcon()))
                 .resize(100, 100)
                 .into(holder.icon);
         //holder.icon.setImageURI(Uri.parse();
-     //   Log.d("error",String.format("https://openweathermap.org/img/w/%s.png",weatherResponse.getWeather().get(0).getIcon()));
+     //   Log.d("error",String.format("https://openweathermap.org/img/w/%s.png",forecastNowWeatherResponse.getWeather().get(0).getIcon()));
 
     }
 

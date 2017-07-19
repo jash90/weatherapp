@@ -1,19 +1,16 @@
 package com.example.ideo7.weather.Model;
 
-import com.example.ideo7.weather.Model.City;
-import com.example.ideo7.weather.Model.DailyWeather;
-
 import java.util.List;
 
 /**
  * Created by ideo7 on 18.07.2017.
  */
 
-public class ForecastResponse {
+public class ForecastHourlyResponse {
     private Integer cod;
     private Double message;
     private Integer cnt;
-    private List<DailyWeather> list;
+    private List<HourlyWeather> list;
 
     public Integer getCod() {
         return cod;
@@ -39,18 +36,18 @@ public class ForecastResponse {
         this.cnt = cnt;
     }
 
-    public List<DailyWeather> getList() {
+    public List<HourlyWeather> getList() {
         return list;
     }
 
-    public void setList(List<DailyWeather> list) {
+    public void setList(List<HourlyWeather> list) {
         this.list = list;
     }
 
-    public ForecastResponse() {
+    public ForecastHourlyResponse() {
     }
 
-    public ForecastResponse(Integer cod, Double message, Integer cnt, List<DailyWeather> list) {
+    public ForecastHourlyResponse(Integer cod, Double message, Integer cnt, List<HourlyWeather> list) {
         this.cod = cod;
         this.message = message;
         this.cnt = cnt;
@@ -59,7 +56,7 @@ public class ForecastResponse {
 
     @Override
     public String toString() {
-        return "ForecastResponse{" +
+        return "ForecastHourlyResponse{" +
                 "cod=" + cod +
                 ", message=" + message +
                 ", cnt=" + cnt +

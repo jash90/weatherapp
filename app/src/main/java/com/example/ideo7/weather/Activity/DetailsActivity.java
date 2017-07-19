@@ -1,11 +1,10 @@
 package com.example.ideo7.weather.Activity;
 
-import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.ideo7.weather.Adapter.ViewPagerAdapter;
 import com.example.ideo7.weather.R;
 
 import it.neokree.materialtabs.MaterialTab;

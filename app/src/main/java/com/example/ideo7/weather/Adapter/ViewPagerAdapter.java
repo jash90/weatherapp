@@ -1,4 +1,4 @@
-package com.example.ideo7.weather.Activity;
+package com.example.ideo7.weather.Adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

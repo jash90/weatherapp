@@ -2,9 +2,6 @@ package com.example.ideo7.weather.Activity;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,17 +11,19 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
-import com.example.ideo7.weather.DailyWeatherAdapter;
+import com.example.ideo7.weather.Adapter.DailyWeatherAdapter;
+import com.example.ideo7.weather.Adapter.HourlyWeatherAdapter;
+import com.example.ideo7.weather.ChartElement.LabelFormatter;
+import com.example.ideo7.weather.ChartElement.MyMarkerView;
 import com.example.ideo7.weather.Model.DailyWeather;
-import com.example.ideo7.weather.Model.ForecastResponse;
+import com.example.ideo7.weather.Model.ForecastDailyResponse;
+import com.example.ideo7.weather.Model.ForecastHourlyResponse;
+import com.example.ideo7.weather.Model.HourlyWeather;
 import com.example.ideo7.weather.R;
-import com.example.ideo7.weather.RespondeAdapter;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -32,24 +31,17 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.renderer.AxisRenderer;
-import com.github.mikephil.charting.renderer.XAxisRenderer;
 import com.github.mikephil.charting.utils.Utils;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,9 +52,12 @@ import retrofit2.Response;
 public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekBarChangeListener,
         OnChartGestureListener, OnChartValueSelectedListener {
     @BindView(R.id.chart1) LineChart lineChart;
-    @BindView(R.id.recyclerView) RecyclerView recyclerView;
+    @BindView(R.id.hourlyWeather) RecyclerView hourlyWeather;
+    @BindView(R.id.dailyWeather) RecyclerView dailyWeather;
+    ArrayList<HourlyWeather> hourlyWeathers;
     ArrayList<DailyWeather> dailyWeathers;
-    DailyWeatherAdapter adapter;
+    HourlyWeatherAdapter hourlyWeatherAdapter;
+    DailyWeatherAdapter dailyWeatherAdapter;
     private String city;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +85,20 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
         lineChart.setScaleEnabled(true);
         // lineChart.setScaleXEnabled(true);
         // lineChart.setScaleYEnabled(true);
+        hourlyWeathers = new ArrayList<>();
         dailyWeathers = new ArrayList<>();
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        adapter = new DailyWeatherAdapter(dailyWeathers);
-        recyclerView.setAdapter(adapter);
+        RecyclerView.LayoutManager hourlyLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        hourlyWeather.setLayoutManager(hourlyLayoutManager);
+        hourlyWeather.setItemAnimator(new DefaultItemAnimator());
+        hourlyWeatherAdapter = new HourlyWeatherAdapter(hourlyWeathers);
+        hourlyWeather.setAdapter(hourlyWeatherAdapter);
+
+        RecyclerView.LayoutManager dailyLayoutManager = new LinearLayoutManager(this);
+        dailyWeather.setLayoutManager(dailyLayoutManager);
+        dailyWeather.setItemAnimator(new DefaultItemAnimator());
+        dailyWeatherAdapter = new DailyWeatherAdapter(dailyWeathers);
+        dailyWeather.setAdapter(dailyWeatherAdapter);
+
         // if disabled, scaling can be done on x- and y-axis separately
         lineChart.setPinchZoom(true);
 
@@ -146,7 +149,8 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
         Log.d("text",city);
         // add data
     //    setData(45, 100);
-        openForecast();
+        getForecastHourly();
+        getForecastDaily();
 
 //        lineChart.setVisibleXRange(20);
 //        lineChart.setVisibleYRange(20f, AxisDependency.LEFT);
@@ -164,16 +168,16 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
         // // dont forget to refresh the drawing
         // lineChart.invalidate();
     }
-    private void openForecast(){
+    private void getForecastHourly(){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastResponse> call = openWeather.getForecast(city,getResources().getString(R.string.appid),getResources().getString(R.string.units),10);
-        call.enqueue(new Callback<ForecastResponse>() {
+        Call<ForecastHourlyResponse> call = openWeather.getForecast(city,getResources().getString(R.string.appid),getResources().getString(R.string.units),10);
+        call.enqueue(new Callback<ForecastHourlyResponse>() {
             @Override
-            public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
-                ArrayList<DailyWeather> list = (ArrayList<DailyWeather>) response.body().getList();
-                for (DailyWeather dailyWeather :list) {
-                    dailyWeathers.add(dailyWeather);
-                    adapter.notifyDataSetChanged();
+            public void onResponse(Call<ForecastHourlyResponse> call, Response<ForecastHourlyResponse> response) {
+                ArrayList<HourlyWeather> list = (ArrayList<HourlyWeather>) response.body().getList();
+                for (HourlyWeather hourlyWeather :list) {
+                    hourlyWeathers.add(hourlyWeather);
+                    hourlyWeatherAdapter.notifyDataSetChanged();
                 }
                 ArrayList<Entry> values = new ArrayList<Entry>();
                 ArrayList<String> labels = new ArrayList<String>();
@@ -242,8 +246,27 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
             }
 
             @Override
-            public void onFailure(Call<ForecastResponse> call, Throwable t) {
+            public void onFailure(Call<ForecastHourlyResponse> call, Throwable t) {
                // Log.d("log",call.request().body().toString());
+                Log.d("log",t.getLocalizedMessage());
+            }
+        });
+    }
+    public void getForecastDaily(){
+        OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
+        Call<ForecastDailyResponse> call = openWeather.getForecastDaily(city,getResources().getString(R.string.appid),getResources().getString(R.string.units));
+        call.enqueue(new Callback<ForecastDailyResponse>() {
+            @Override
+            public void onResponse(Call<ForecastDailyResponse> call, Response<ForecastDailyResponse> response) {
+                ArrayList<DailyWeather> list = (ArrayList<DailyWeather>) response.body().getList();
+                for (DailyWeather dailyWeather :list) {
+                    dailyWeathers.add(dailyWeather);
+                    dailyWeatherAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ForecastDailyResponse> call, Throwable t) {
                 Log.d("log",t.getLocalizedMessage());
             }
         });

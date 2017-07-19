@@ -13,7 +13,7 @@ import java.util.List;
  * Created by ideo7 on 18.07.2017.
  */
 
-public class DailyWeather {
+public class HourlyWeather {
     private Integer dt;
     private Main main;
     private List<Weather> weather;
@@ -96,10 +96,10 @@ public class DailyWeather {
         this.dt_txt = dt_txt;
     }
 
-    public DailyWeather() {
+    public HourlyWeather() {
     }
 
-    public DailyWeather(Integer dt, Main main, List<Weather> weather, Clouds clouds, Wind wind, Rain rain, Snow snow, Sys pod, String dt_txt) {
+    public HourlyWeather(Integer dt, Main main, List<Weather> weather, Clouds clouds, Wind wind, Rain rain, Snow snow, Sys pod, String dt_txt) {
         this.dt = dt;
         this.main = main;
         this.weather = weather;
@@ -113,7 +113,7 @@ public class DailyWeather {
 
     @Override
     public String toString() {
-        return "DailyWeather{" +
+        return "HourlyWeather{" +
                 "dt=" + dt +
                 ", main=" + main +
                 ", weather=" + weather +

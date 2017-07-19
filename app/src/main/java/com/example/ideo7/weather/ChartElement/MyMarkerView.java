@@ -1,4 +1,4 @@
-package com.example.ideo7.weather.Activity;
+package com.example.ideo7.weather.ChartElement;
 
 import android.content.Context;
 import android.widget.TextView;
