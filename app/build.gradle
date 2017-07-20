@@ -18,7 +18,11 @@ android {
         }
     }
 }
-
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -40,7 +44,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
     compile 'com.kyleduo.switchbutton:library:1.2.9'
-    compile 'com.github.aakira:expandable-layout:1.4.2@aar'
+    compile 'com.github.aakira:expandable-layout:1.6.0@aar'
     compile 'it.neokree:MaterialTabs:0.11'
     compile 'com.android.support:design:25.3.1'
     compile 'com.jakewharton:butterknife:8.7.0'
@@ -48,4 +52,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
     compile 'net.danlew:android.joda:2.9.9'
+    compile 'com.github.traex.expandablelayout:library:1.2.2'
 }

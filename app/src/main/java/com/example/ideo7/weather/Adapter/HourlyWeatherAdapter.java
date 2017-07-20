@@ -11,7 +11,10 @@ import com.example.ideo7.weather.Model.HourlyWeather;
 import com.example.ideo7.weather.R;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,6 +31,7 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
         @BindView(R.id.temp) TextView temp;
         @BindView(R.id.pressure) TextView pressure;
         @BindView(R.id.wind) TextView wind;
+        @BindView(R.id.hour) TextView hour;
         public MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
@@ -54,6 +58,10 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
         holder.wind.setText(hourlyWeather.getWind()!=null? hourlyWeather.getWind().getSpeed().toString()+" m/s":"0 m/s");
         holder.temp.setText(hourlyWeather.getMain().getTemp().toString()+holder.itemView.getContext().getResources().getString(R.string.degrees));
         holder.pressure.setText(hourlyWeather.getMain().getPressure().toString()+" hpa");
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        format.setTimeZone(cal.getTimeZone());
+        holder.hour.setText(format.format(new Date(hourlyWeather.getDt()*1000L)));
     }
 
     @Override

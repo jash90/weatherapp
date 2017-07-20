@@ -75,6 +75,7 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
         holder.tempNight.setText(String.format("%.2f %s",dailyWeather.getTemp().getNight(),holder.itemView.getContext().getResources().getString(R.string.degrees)));
         holder.cloud.setText(String.format("clouds: %d %%,  %.2f hpa",dailyWeather.getClouds(),dailyWeather.getPressure()));
         holder.wind.setText(String.format("%.2f m/s",dailyWeather.getSpeed()));
+
         holder.description.setText(dailyWeather.getWeather().get(0).getDescription());
         DateTime dateTime = new DateTime(dailyWeather.getDt()*1000L);
         Log.d("datetime1",dateTime.toLocalDate().toString());

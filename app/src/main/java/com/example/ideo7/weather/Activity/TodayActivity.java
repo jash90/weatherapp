@@ -142,16 +142,16 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
                 for (HourlyWeather hw :list) {
                     hourlyWeathers.add(hw);
                     hourlyWeatherAdapter.notifyDataSetChanged();
-                    Log.d("recycler", String.valueOf(hourlyWeather.getWidth()));
+                    Log.d("hw", hw.toString());
                 }
                 title.setText(String.format("Weather and forecasts in %s, %s",response.body().getCity().getName(),response.body().getCity().getCountry()));
                 ArrayList<Entry> tempvalues = new ArrayList<Entry>();
                 ArrayList<BarEntry> rainvalues = new ArrayList<>();
-                ArrayList<String> labels = new ArrayList<String>();
+                final ArrayList<String> labels = new ArrayList<String>();
                 Double max = list.get(0).getMain().getTemp();
                 Double min = list.get(0).getMain().getTemp();
                 Calendar cal = Calendar.getInstance();
-                SimpleDateFormat format = new SimpleDateFormat("HH");
+                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                 format.setTimeZone(cal.getTimeZone());
                 for (int i = 0; i < list.size(); i++) {
                     tempvalues.add(new Entry(i, list.get(i).getMain().getTemp().floatValue()));
@@ -160,7 +160,7 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
                             rainvalues.add(new BarEntry(i, list.get(i).getRain().getLast3h().floatValue()));
                             Log.d("rainValues", list.get(i).getRain().getLast3h().toString());
                         } else {
-                            rainvalues.add(new BarEntry(i, 0));
+                            rainvalues.add(new BarEntry(i, 0f));
                         }
                     }
                     labels.add(format.format(new Date(list.get(i).getDt()*1000L)));
@@ -185,8 +185,10 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
                     set1.setValueTextColor(Color.rgb(0,0,255));
                     set1.setValueTextSize(10f);
 
+
+
                     XAxis xAxis = chart.getXAxis();
-                    xAxis.setPosition(XAxisPosition.BOTTOM);
+                    xAxis.setGranularity(1f);
                     xAxis.setValueFormatter(new LabelFormatter(labels));
 
 
