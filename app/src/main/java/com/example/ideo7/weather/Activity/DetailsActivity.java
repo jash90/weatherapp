@@ -1,5 +1,6 @@
 package com.example.ideo7.weather.Activity;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.ideo7.weather.Adapter.ViewPagerAdapter;
+import com.example.ideo7.weather.Fragments.HourlyWeatherFragment;
 import com.example.ideo7.weather.Fragments.MainWeatherFragment;
 import com.example.ideo7.weather.R;
 
@@ -31,7 +33,8 @@ public class DetailsActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
         }
-
+        Intent intent = getIntent();
+        setTitle(intent.getStringExtra("city")+","+intent.getStringExtra("country"));
         MaterialTabHost tabHost = (MaterialTabHost) findViewById(android.R.id.tabhost);
         tabHost.setType(MaterialTabHost.Type.FullScreenWidth);
 //        tabHost.setType(MaterialTabHost.Type.Centered);
@@ -67,6 +70,7 @@ public class DetailsActivity extends AppCompatActivity {
             switch (position)
             {
                 case 0: return new MainWeatherFragment();
+                case 2: return new HourlyWeatherFragment();
                 default: return PlaceholderFragment.newInstance(position+1);
             }
         }

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
@@ -67,7 +68,6 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
     ArrayList<DailyWeather> dailyWeathers;
     HourlyWeatherAdapter hourlyWeatherAdapter;
     DailyWeatherAdapter dailyWeatherAdapter;
-    private String city;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_today, container,false);
@@ -118,10 +118,13 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
         //rightAxis.setDrawLimitLinesBehindData(true);
 
         Intent intent =getActivity().getIntent();
-        city = intent.getStringExtra("city");
-        Log.d("text",city);
-        getForecastHourly();
-        getForecastDaily();
+        if (intent.getIntExtra("idcity",0)!=0) {
+            getForecastHourly(intent.getIntExtra("idcity", 0));
+            getForecastDaily(intent.getIntExtra("idcity", 0));
+        }
+        else{
+            Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
+        }
         //chart.animateX(2500);
         Legend l = chart.getLegend();
         l.setForm(Legend.LegendForm.CIRCLE);
@@ -129,9 +132,9 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
         Log.d("recycler", String.valueOf(hourlyWeather.getWidth()));
         return v;
     }
-    private void getForecastHourly(){
+    private void getForecastHourly(Integer city){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastHourlyResponse> call = openWeather.getForecast(city,getResources().getString(R.string.appid),getResources().getString(R.string.units),10);
+        Call<ForecastHourlyResponse> call = openWeather.getForecastId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units),10);
         call.enqueue(new Callback<ForecastHourlyResponse>() {
             @Override
             public void onResponse(Call<ForecastHourlyResponse> call, Response<ForecastHourlyResponse> response) {
@@ -220,9 +223,9 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
             }
         });
     }
-    public void getForecastDaily(){
+    public void getForecastDaily(Integer city){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastDailyResponse> call = openWeather.getForecastDaily(city,getResources().getString(R.string.appid),getResources().getString(R.string.units));
+        Call<ForecastDailyResponse> call = openWeather.getForecastDailyId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units));
         call.enqueue(new Callback<ForecastDailyResponse>() {
             @Override
             public void onResponse(Call<ForecastDailyResponse> call, Response<ForecastDailyResponse> response) {

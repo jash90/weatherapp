@@ -4,11 +4,9 @@
     android:layout_height="match_parent"
     tools:context="com.example.ideo7.weather.Fragments.DailyWeatherFragment">
 
-   <com.github.mikephil.charting.charts.LineChart
+   <com.github.mikephil.charting.charts.CombinedChart
+       android:id="@+id/chart"
        android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:id="@+id/chart">
-
-   </com.github.mikephil.charting.charts.LineChart>
+       android:layout_height="match_parent" />
 
 </FrameLayout>

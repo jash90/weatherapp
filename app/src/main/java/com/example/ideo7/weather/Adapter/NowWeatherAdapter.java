@@ -151,6 +151,8 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
 //               holder.itemView.getContext().startActivity(intent);
                 Intent intent = new Intent(holder.itemView.getContext(), DetailsActivity.class);
                 intent.putExtra("city", forecastNowWeatherResponse.getName());
+                intent.putExtra("country",forecastNowWeatherResponse.getSys().getCountry());
+                intent.putExtra("idcity",forecastNowWeatherResponse.getId());
                 holder.itemView.getContext().startActivity(intent);
 
             }
