@@ -70,7 +70,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
     DailyWeatherAdapter dailyWeatherAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_today, container,false);
+        View v = inflater.inflate(R.layout.fragment_main, container,false);
         ButterKnife.bind(this,v);
 
         chart.setOnChartGestureListener(this);
@@ -148,8 +148,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                 ArrayList<Entry> tempvalues = new ArrayList<Entry>();
                 ArrayList<BarEntry> rainvalues = new ArrayList<>();
                 final ArrayList<String> labels = new ArrayList<String>();
-                Double max = list.get(0).getMain().getTemp();
-                Double min = list.get(0).getMain().getTemp();
+                Double max = 0.0;
                 Calendar cal = Calendar.getInstance();
                 SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                 format.setTimeZone(cal.getTimeZone());
@@ -159,6 +158,9 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                         if (list.get(i).getRain().getLast3h() != null) {
                             rainvalues.add(new BarEntry(i, list.get(i).getRain().getLast3h().floatValue()));
                             Log.d("rainValues", list.get(i).getRain().getLast3h().toString());
+                            if (max<list.get(i).getRain().getLast3h()){
+                                max=list.get(i).getRain().getLast3h();
+                            }
                         } else {
                             rainvalues.add(new BarEntry(i, 0f));
                         }
@@ -212,6 +214,8 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                     combinedData.setData(data);
                     combinedData.setData(d);
                     chart.setData(combinedData);
+                    YAxis rightAxis = chart.getAxisRight();
+                    rightAxis.setAxisMaximum(max.floatValue()+20f);
                     chart.invalidate();
                 }
             }

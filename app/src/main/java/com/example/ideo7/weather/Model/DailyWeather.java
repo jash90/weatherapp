@@ -15,6 +15,8 @@ public class DailyWeather {
     private Double speed;
     private Double deg;
     private Integer clouds;
+    private Double rain;
+    private Double snow;
 
     public Integer getDt() {
         return dt;
@@ -80,10 +82,26 @@ public class DailyWeather {
         this.clouds = clouds;
     }
 
+    public Double getRain() {
+        return rain;
+    }
+
+    public void setRain(Double rain) {
+        this.rain = rain;
+    }
+
+    public Double getSnow() {
+        return snow;
+    }
+
+    public void setSnow(Double snow) {
+        this.snow = snow;
+    }
+
     public DailyWeather() {
     }
 
-    public DailyWeather(Integer dt, Temp temp, Double pressure, Integer humidity, ArrayList<Weather> weather, Double speed, Double deg, Integer clouds) {
+    public DailyWeather(Integer dt, Temp temp, Double pressure, Integer humidity, ArrayList<Weather> weather, Double speed, Double deg, Integer clouds, Double rain, Double snow) {
         this.dt = dt;
         this.temp = temp;
         this.pressure = pressure;
@@ -92,6 +110,8 @@ public class DailyWeather {
         this.speed = speed;
         this.deg = deg;
         this.clouds = clouds;
+        this.rain = rain;
+        this.snow = snow;
     }
 
     @Override
@@ -105,6 +125,8 @@ public class DailyWeather {
                 ", speed=" + speed +
                 ", deg=" + deg +
                 ", clouds=" + clouds +
+                ", rain=" + rain +
+                ", snow=" + snow +
                 '}';
     }
 }

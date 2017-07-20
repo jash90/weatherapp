@@ -26,6 +26,8 @@ public interface OpenWeather {
     Call<ForecastHourlyResponse> getForecastId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units, @Query("cnt") Integer cnt);
     @GET("forecast/daily")
     Call<ForecastDailyResponse> getForecastDailyId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units);
+    @GET("forecast/daily")
+    Call<ForecastDailyResponse> getForecastDailyId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units,@Query("cnt") Integer cnt);
     @GET("forecast")
     Call<ForecastHourlyResponse> getForecastAllId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units);
 }
