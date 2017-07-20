@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.ideo7.weather.Activity.TodayActivity;
+import com.example.ideo7.weather.Activity.DetailsActivity;
 import com.example.ideo7.weather.Model.Convert;
 import com.example.ideo7.weather.Model.ForecastNowWeatherResponse;
 
@@ -38,7 +38,7 @@ import butterknife.ButterKnife;
 public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.MyViewHolder> {
 
     private ArrayList<ForecastNowWeatherResponse> list;
-    private ArrayList<String> citys;
+    private ArrayList<String> favoriteCitys;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
 
@@ -75,7 +75,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
 
     public NowWeatherAdapter(ArrayList<ForecastNowWeatherResponse> forecastNowWeatherResponseArrayList, ArrayList<String> citys) {
         this.list = forecastNowWeatherResponseArrayList;
-        this.citys=citys;
+        this.favoriteCitys=citys;
     }
 
 
@@ -146,9 +146,13 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               Intent intent = new Intent(holder.itemView.getContext(), TodayActivity.class);
-               intent.putExtra("city", forecastNowWeatherResponse.getName());
-               holder.itemView.getContext().startActivity(intent);
+//               Intent intent = new Intent(holder.itemView.getContext(), MainWeatherActivity.class);
+//               intent.putExtra("city", forecastNowWeatherResponse.getName());
+//               holder.itemView.getContext().startActivity(intent);
+                Intent intent = new Intent(holder.itemView.getContext(), DetailsActivity.class);
+                intent.putExtra("city", forecastNowWeatherResponse.getName());
+                holder.itemView.getContext().startActivity(intent);
+
             }
         });
         Calendar cal = Calendar.getInstance();
@@ -161,7 +165,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         holder.sunset.setText(sunset.format(new Date(forecastNowWeatherResponse.getSys().getSunset()*1000L)));
         holder.geocords.setText(forecastNowWeatherResponse.getCoord().toString());
         holder.date.setText(new SimpleDateFormat("HH:mm dd.MM.yyyy").format(new Date()));
-        if (!citys.contains(forecastNowWeatherResponse.getName())){
+        if (!favoriteCitys.contains(forecastNowWeatherResponse.getName())){
             holder.checked.setChecked(false);
         }
         else {
@@ -172,13 +176,14 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)
                 {
-                    citys.add(holder.city.getText().toString());
+
+                    favoriteCitys.add(holder.city.getText().toString());
                 }
                 else
                 {
-                    citys.remove(holder.city.getText().toString());
+                    favoriteCitys.remove(holder.city.getText().toString());
                 }
-                Log.d("citys",citys.toString());
+                Log.d("citys",favoriteCitys.toString());
             }
         });
         Picasso.with(holder.itemView.getContext())

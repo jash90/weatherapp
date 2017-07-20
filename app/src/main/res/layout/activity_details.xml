@@ -7,14 +7,14 @@
     android:orientation="vertical"
     tools:context="com.example.ideo7.weather.Activity.DetailsActivity">
 
-    <it.neokree.materialtabs.MaterialTabHost
+    <net.yanzm.mth.MaterialTabHost
+        android:id="@android:id/tabhost"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/materialTabHost">
-    </it.neokree.materialtabs.MaterialTabHost>
+        android:layout_height="wrap_content" />
+
     <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/viewPager">
-    </android.support.v4.view.ViewPager>
+        android:layout_height="match_parent" />
+
 </LinearLayout>

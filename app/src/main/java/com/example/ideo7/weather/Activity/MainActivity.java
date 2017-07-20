@@ -49,10 +49,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!editText.getText().toString().isEmpty() ) {
-                    if (!citys.contains(editText.getText().toString())) {
                         searchWeather(editText.getText().toString());
-                    } else {
-                        Toast.makeText(v.getContext(),"City is on the list.",Toast.LENGTH_SHORT).show();}
                 }
             }
         });
@@ -64,11 +61,11 @@ public class MainActivity extends AppCompatActivity {
         String json = sharedPreferences.getString("json", null);
         if (json!=null){
             ArrayList<String> arrayList = gson.fromJson(json, String.class.getGenericSuperclass());
-            favoritescitys.addAll(arrayList);
-            for (String city : favoritescitys){
-                searchWeather(city);
-                citys.add(city);
+            for (int i=0;i<arrayList.size();i++){
+                searchWeather(arrayList.get(i));
             }
+            //citys.addAll(arrayList);
+            favoritescitys.addAll(arrayList);
         }
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -78,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(nowWeatherAdapter);
     }
 
-    public void searchWeather(String city)
+    public void searchWeather(final String city)
     {
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
         Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city,getResources().getString(R.string.appid),getResources().getString(R.string.units));
@@ -86,9 +83,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ForecastNowWeatherResponse> call, retrofit2.Response<ForecastNowWeatherResponse> response) {
                 if (response.isSuccessful()){
-                    forecastNowWeatherResponses.add(response.body());
-                    nowWeatherAdapter.notifyDataSetChanged();
-                    recyclerView.refreshDrawableState();
+                    if (!citys.contains(response.body().getName())){
+                        forecastNowWeatherResponses.add(response.body());
+                        nowWeatherAdapter.notifyDataSetChanged();
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(),"City is on the list.",Toast.LENGTH_SHORT).show();
+                    }
+                    citys.add(response.body().getName());
+
                 }
             }
 

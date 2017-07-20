@@ -20,7 +20,7 @@ import java.util.ArrayList;
 /**
 
  */
-public class MainFragment extends Fragment {
+public class DailyWeatherFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

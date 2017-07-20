@@ -1,16 +1,18 @@
-package com.example.ideo7.weather.Activity;
+package com.example.ideo7.weather.Fragments;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -26,11 +28,7 @@ import com.example.ideo7.weather.Model.ForecastHourlyResponse;
 import com.example.ideo7.weather.Model.HourlyWeather;
 import com.example.ideo7.weather.R;
 import com.github.mikephil.charting.charts.CombinedChart;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -40,13 +38,11 @@ import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,8 +55,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekBarChangeListener,
+public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarChangeListener,
         OnChartGestureListener, OnChartValueSelectedListener {
+
+
     @BindView(R.id.chart1) CombinedChart chart;
     @BindView(R.id.hourlyWeather)  RecyclerView hourlyWeather;
     @BindView(R.id.dailyWeather) RecyclerView dailyWeather;
@@ -71,11 +69,9 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
     DailyWeatherAdapter dailyWeatherAdapter;
     private String city;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_today);
-        ButterKnife.bind(this);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.activity_today, container,false);
+        ButterKnife.bind(this,v);
 
         chart.setOnChartGestureListener(this);
         chart.setOnChartValueSelectedListener(this);
@@ -87,13 +83,13 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
 
         hourlyWeathers = new ArrayList<>();
         dailyWeathers = new ArrayList<>();
-        RecyclerView.LayoutManager hourlyLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView.LayoutManager hourlyLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         hourlyWeather.setLayoutManager(hourlyLayoutManager);
         hourlyWeather.setItemAnimator(new DefaultItemAnimator());
         hourlyWeatherAdapter = new HourlyWeatherAdapter(hourlyWeathers);
         hourlyWeather.setAdapter(hourlyWeatherAdapter);
 
-        RecyclerView.LayoutManager dailyLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager dailyLayoutManager = new LinearLayoutManager(getContext());
         dailyWeather.setLayoutManager(dailyLayoutManager);
         dailyWeather.setItemAnimator(new DefaultItemAnimator());
         dailyWeatherAdapter = new DailyWeatherAdapter(dailyWeathers);
@@ -101,7 +97,7 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
         Log.d("recycler", String.valueOf(hourlyWeather.getWidth()));
 
         chart.setPinchZoom(true);
-        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+        MyMarkerView mv = new MyMarkerView(getContext(), R.layout.marker_view);
         mv.setChartView(chart);
         chart.setMarker(mv);
 
@@ -109,19 +105,19 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
         leftAxis.removeAllLimitLines();
         leftAxis.setAxisMaximum(50f);
         leftAxis.setAxisMinimum(-50f);
-       // leftAxis.enableGridDashedLine(10f, 10f, 0f);
+        // leftAxis.enableGridDashedLine(10f, 10f, 0f);
         leftAxis.setDrawZeroLine(false);
         //leftAxis.setDrawLimitLinesBehindData(true);
 
         YAxis rightAxis = chart.getAxisRight();
         rightAxis.removeAllLimitLines();
-        rightAxis.setAxisMaximum(150f);
+        rightAxis.setAxisMaximum(10f);
         rightAxis.setAxisMinimum(0f);
-      //  rightAxis.enableGridDashedLine(10f, 10f, 0f);
+        //  rightAxis.enableGridDashedLine(10f, 10f, 0f);
         rightAxis.setDrawZeroLine(false);
         //rightAxis.setDrawLimitLinesBehindData(true);
 
-        Intent intent = getIntent();
+        Intent intent =getActivity().getIntent();
         city = intent.getStringExtra("city");
         Log.d("text",city);
         getForecastHourly();
@@ -131,6 +127,7 @@ public class TodayActivity extends AppCompatActivity  implements SeekBar.OnSeekB
         l.setForm(Legend.LegendForm.CIRCLE);
         chart.invalidate();
         Log.d("recycler", String.valueOf(hourlyWeather.getWidth()));
+        return v;
     }
     private void getForecastHourly(){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
