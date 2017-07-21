@@ -49,7 +49,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setOnPageChangeListener(tabHost);
+        viewPager.addOnPageChangeListener(tabHost);
 
         tabHost.setOnTabChangeListener(new MaterialTabHost.OnTabChangeListener() {
             @Override

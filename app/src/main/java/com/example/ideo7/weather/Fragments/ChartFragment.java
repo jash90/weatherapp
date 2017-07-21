@@ -50,16 +50,19 @@ public class ChartFragment extends Fragment {
             title.setText(String.format("Chart weather and forecasts in %s, %s",intent.getStringExtra("city"),intent.getStringExtra("country")));
         }
 
-//        tabHost.setType(MaterialTabHost.Type.Centered);
-//        tabHost.setType(MaterialTabHost.Type.LeftOffset);
 
         SectionsPagerAdapter pagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
         for (int i = 0; i < pagerAdapter.getCount(); i++) {
             tabHost.addTab(pagerAdapter.getPageTitle(i));
         }
-
+        for (int i=0;i<tabHost.getTabWidget().getChildCount();i++) {
+            if (tabHost.getTabWidget().getChildAt(i) instanceof TextView) {
+                TextView t = (TextView) tabHost.getTabWidget().getChildAt(i);
+                t.setTextSize(12);
+            }
+        }
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setOnPageChangeListener(tabHost);
+        viewPager.addOnPageChangeListener(tabHost);
 
         tabHost.setOnTabChangeListener(new MaterialTabHost.OnTabChangeListener() {
             @Override
@@ -124,8 +127,8 @@ public class ChartFragment extends Fragment {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static DetailsActivity.PlaceholderFragment newInstance(int sectionNumber) {
-            DetailsActivity.PlaceholderFragment fragment = new DetailsActivity.PlaceholderFragment();
+        public static PlaceholderFragment newInstance(int sectionNumber) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
