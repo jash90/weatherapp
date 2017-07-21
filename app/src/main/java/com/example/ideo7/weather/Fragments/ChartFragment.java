@@ -36,20 +36,24 @@ import butterknife.ButterKnife;
  */
 
 public class ChartFragment extends Fragment {
-    @BindView(R.id.tabHost)
-    MaterialTabHost tabHost;
-    @BindView(R.id.viewPager)
-    ViewPager viewPager;
+    @BindView(R.id.tabHost) MaterialTabHost tabHost;
+    @BindView(R.id.viewPager) ViewPager viewPager;
+    @BindView(R.id.title) TextView title;
     ArrayList<DailyWeather> dailyWeathers;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chart, container,false);
         ButterKnife.bind(this,v);
         tabHost.setType(MaterialTabHost.Type.FullScreenWidth);
+        Intent intent = getActivity().getIntent();
+        if (intent.getStringExtra("city")!=null) {
+            title.setText(String.format("Chart weather and forecasts in %s, %s",intent.getStringExtra("city"),intent.getStringExtra("country")));
+        }
+
 //        tabHost.setType(MaterialTabHost.Type.Centered);
 //        tabHost.setType(MaterialTabHost.Type.LeftOffset);
 
-        SectionsPagerAdapter pagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+        SectionsPagerAdapter pagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
         for (int i = 0; i < pagerAdapter.getCount(); i++) {
             tabHost.addTab(pagerAdapter.getPageTitle(i));
         }
@@ -77,6 +81,10 @@ public class ChartFragment extends Fragment {
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position)
             {
+                case 0: return new TemperatureChart();
+                case 1: return new WindChart();
+                case 2: return new PressureChart();
+                case 3: return new PrecipitationChart();
                 default: return PlaceholderFragment.newInstance(position+1);
             }
         }

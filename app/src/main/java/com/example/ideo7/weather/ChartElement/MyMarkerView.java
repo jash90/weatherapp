@@ -30,17 +30,11 @@ public class MyMarkerView extends MarkerView {
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
 
-
-
-
-        if (e instanceof CandleEntry) {
-
-            CandleEntry ce = (CandleEntry) e;
-
-            tvContent.setText("" +  Utils.formatNumber(ce.getHigh(), 0, true));
-        } else {
-
-            tvContent.setText("" + Utils.formatNumber(e.getY(), 0, true));
+        if (e.getData()!=null){
+            tvContent.setText(e.getData().toString());
+        }
+        else {
+            tvContent.setText(String.valueOf( e.getY()));
         }
 
         super.refreshContent(e, highlight);

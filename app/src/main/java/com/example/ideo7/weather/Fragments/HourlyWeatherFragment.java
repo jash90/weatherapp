@@ -71,6 +71,7 @@ public class HourlyWeatherFragment extends Fragment{
                 ArrayList<HourlyWeather> hws = (ArrayList<HourlyWeather>) response.body().getList();
                 for (HourlyWeather hw : hws)
                     hourlyWeathers.add(hw);
+
                 hourlyWeatherAdapter.notifyDataSetChanged();
                 title.setText(String.format("Hourly weather and forecasts in %s,%s",response.body().getCity().getName(),response.body().getCity().getCountry()));
 
