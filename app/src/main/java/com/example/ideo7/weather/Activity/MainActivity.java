@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
+import com.example.ideo7.weather.Model.Convert;
 import com.example.ideo7.weather.Model.ForecastNowWeatherResponse;
 import com.example.ideo7.weather.R;
 import com.example.ideo7.weather.Adapter.NowWeatherAdapter;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     public void searchWeather(final String city)
     {
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city,getResources().getString(R.string.appid),getResources().getString(R.string.units));
+        Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city,getResources().getString(R.string.appid),getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastNowWeatherResponse>() {
             @Override
             public void onResponse(Call<ForecastNowWeatherResponse> call, retrofit2.Response<ForecastNowWeatherResponse> response) {

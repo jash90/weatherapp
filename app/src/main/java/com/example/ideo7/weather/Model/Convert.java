@@ -1,5 +1,11 @@
 package com.example.ideo7.weather.Model;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 /**
  * Created by ideo7 on 17.07.2017.
  */
@@ -125,5 +131,13 @@ public class Convert {
             case 962: return "hurricane";
             default: return "?";
         }
+    }
+    public static String getlang(){
+
+        String[] lang = new String[]{"ar", "bg", "ca", "cz", "de","el","en", "fa", "fi", "fr", "gl", "hr", "hu", "it",
+                "ja", "kr", "la", "lt", "mk", "nl", "pl", "pt", "ro", "ru", "se", "sk", "sl", "es", "tr", "ua", "vi",
+                "zh_cn", "zh_tw"};
+        List<String> langs =  Arrays.asList(lang);
+        return langs.contains(Locale.getDefault().getLanguage())?Locale.getDefault().getLanguage():"en";
     }
 }

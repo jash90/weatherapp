@@ -15,6 +15,7 @@ import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
 import com.example.ideo7.weather.ChartElement.LabelFormatter;
 import com.example.ideo7.weather.ChartElement.MyMarkerView;
+import com.example.ideo7.weather.Model.Convert;
 import com.example.ideo7.weather.Model.ForecastHourlyResponse;
 import com.example.ideo7.weather.Model.HourlyWeather;
 import com.example.ideo7.weather.R;
@@ -96,7 +97,7 @@ public class PressureChart extends Fragment {
     }
     public void getForecast(Integer city){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastHourlyResponse> call = openWeather.getForecastAllId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units));
+        Call<ForecastHourlyResponse> call = openWeather.getForecastAllId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastHourlyResponse>() {
             @Override
             public void onResponse(Call<ForecastHourlyResponse> call, Response<ForecastHourlyResponse> response) {

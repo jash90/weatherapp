@@ -23,6 +23,7 @@ import com.example.ideo7.weather.Adapter.DailyWeatherAdapter;
 import com.example.ideo7.weather.Adapter.HourlyWeatherAdapter;
 import com.example.ideo7.weather.ChartElement.LabelFormatter;
 import com.example.ideo7.weather.ChartElement.MyMarkerView;
+import com.example.ideo7.weather.Model.Convert;
 import com.example.ideo7.weather.Model.DailyWeather;
 import com.example.ideo7.weather.Model.ForecastDailyResponse;
 import com.example.ideo7.weather.Model.ForecastHourlyResponse;
@@ -134,7 +135,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
     }
     private void getForecastHourly(Integer city){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastHourlyResponse> call = openWeather.getForecastId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units),10);
+        Call<ForecastHourlyResponse> call = openWeather.getForecastId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units),10,Convert.getlang());
         call.enqueue(new Callback<ForecastHourlyResponse>() {
             @Override
             public void onResponse(Call<ForecastHourlyResponse> call, Response<ForecastHourlyResponse> response) {
@@ -229,7 +230,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
     }
     public void getForecastDaily(Integer city){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastDailyResponse> call = openWeather.getForecastDailyId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units));
+        Call<ForecastDailyResponse> call = openWeather.getForecastDailyId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastDailyResponse>() {
             @Override
             public void onResponse(Call<ForecastDailyResponse> call, Response<ForecastDailyResponse> response) {

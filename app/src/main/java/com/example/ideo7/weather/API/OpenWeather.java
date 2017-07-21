@@ -15,19 +15,19 @@ import retrofit2.http.Query;
 public interface OpenWeather {
 
     @GET("weather")
-    Call<ForecastNowWeatherResponse> getWeather(@Query("q") String q, @Query("appid") String appid, @Query("units") String units);
+    Call<ForecastNowWeatherResponse> getWeather(@Query("q") String q, @Query("appid") String appid, @Query("units") String units, @Query("lang") String lang);
     @GET("forecast")
-    Call<ForecastHourlyResponse> getForecast(@Query("q") String q, @Query("appid") String appid, @Query("units") String units, @Query("cnt") Integer cnt);
+    Call<ForecastHourlyResponse> getForecast(@Query("q") String q, @Query("appid") String appid, @Query("units") String units, @Query("cnt") Integer cnt, @Query("lang") String lang);
     @GET("forecast/daily")
-    Call<ForecastDailyResponse> getForecastDaily(@Query("q") String q, @Query("appid") String appid, @Query("units") String units);
+    Call<ForecastDailyResponse> getForecastDaily(@Query("q") String q, @Query("appid") String appid, @Query("units") String units, @Query("lang") String lang);
     @GET("forecast")
-    Call<ForecastHourlyResponse> getForecastAll(@Query("q") String q, @Query("appid") String appid, @Query("units") String units);
+    Call<ForecastHourlyResponse> getForecastAll(@Query("q") String q, @Query("appid") String appid, @Query("units") String units, @Query("lang") String lang);
     @GET("forecast")
-    Call<ForecastHourlyResponse> getForecastId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units, @Query("cnt") Integer cnt);
+    Call<ForecastHourlyResponse> getForecastId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units, @Query("cnt") Integer cnt, @Query("lang") String lang);
     @GET("forecast/daily")
-    Call<ForecastDailyResponse> getForecastDailyId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units);
+    Call<ForecastDailyResponse> getForecastDailyId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units, @Query("lang") String lang);
     @GET("forecast/daily")
-    Call<ForecastDailyResponse> getForecastDailyId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units,@Query("cnt") Integer cnt);
+    Call<ForecastDailyResponse> getForecastDailyId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units,@Query("cnt") Integer cnt, @Query("lang") String lang);
     @GET("forecast")
-    Call<ForecastHourlyResponse> getForecastAllId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units);
+    Call<ForecastHourlyResponse> getForecastAllId(@Query("id") Integer id, @Query("appid") String appid, @Query("units") String units, @Query("lang") String lang);
 }

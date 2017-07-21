@@ -106,7 +106,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         if (forecastNowWeatherResponse.getClouds()!=null){
                 holder.cloud.setText(String.format("%d %%", forecastNowWeatherResponse.getClouds().getAll()));
                 if (forecastNowWeatherResponse.getWeather().get(0).getId()>=800&& forecastNowWeatherResponse.getWeather().get(0).getId()<900){
-                    holder.cloud.setText(Convert.convertWeatherCodeToDescription(forecastNowWeatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
+                    holder.cloud.setText(forecastNowWeatherResponse.getWeather().get(0).getDescription()+", "+holder.cloud.getText().toString());
                 }
 
         }
@@ -116,7 +116,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         if (forecastNowWeatherResponse.getRain()!=null){
             holder.rain.setText(String.format("%.2f mm",forecastNowWeatherResponse.getRain().getLast3h()));
             if (forecastNowWeatherResponse.getWeather().get(0).getId()>=300&& forecastNowWeatherResponse.getWeather().get(0).getId()<400){
-                holder.rain.setText(Convert.convertWeatherCodeToDescription(forecastNowWeatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
+                holder.rain.setText(forecastNowWeatherResponse.getWeather().get(0).getDescription()+", "+holder.cloud.getText().toString());
             }
         }
         else{
@@ -125,7 +125,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         if (forecastNowWeatherResponse.getSnow()!=null){
             holder.snow.setText(String.format("%.2f mm",forecastNowWeatherResponse.getSnow().getLast3h()));
             if (forecastNowWeatherResponse.getWeather().get(0).getId()>=600&& forecastNowWeatherResponse.getWeather().get(0).getId()<700){
-                holder.snow.setText(Convert.convertWeatherCodeToDescription(forecastNowWeatherResponse.getWeather().get(0).getId())+", "+holder.cloud.getText().toString());
+                holder.snow.setText(forecastNowWeatherResponse.getWeather().get(0).getDescription()+", "+holder.cloud.getText().toString());
             }
         }
         else{
