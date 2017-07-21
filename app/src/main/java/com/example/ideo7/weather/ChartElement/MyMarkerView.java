@@ -11,18 +11,21 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.Utils;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by ideo7 on 18.07.2017.
  */
 
 public class MyMarkerView extends MarkerView {
 
-    private TextView tvContent;
+    @BindView(R.id.tvContent) TextView tvContent;
 
     public MyMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
 
-        tvContent = (TextView) findViewById(R.id.tvContent);
+        ButterKnife.bind(this);
     }
 
     // callbacks everytime the MarkerView is redrawn, can be used to update the
