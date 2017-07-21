@@ -7,7 +7,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,19 +26,25 @@ import net.yanzm.mth.MaterialTabHost;
 
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class DetailsActivity extends AppCompatActivity {
-
+    @BindView(R.id.tabHost) MaterialTabHost tabHost;
+    @BindView(R.id.viewPager) ViewPager viewPager;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    private Menu menu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setElevation(0);
-        }
+        ButterKnife.bind(this);
+        menu = toolbar.getMenu();
         Intent intent = getIntent();
-        setTitle(intent.getStringExtra("city")+","+intent.getStringExtra("country"));
-        MaterialTabHost tabHost = (MaterialTabHost) findViewById(R.id.tabHost);
+        getSupportActionBar().hide();
+        //setTitle(intent.getStringExtra("city")+","+intent.getStringExtra("country"));
+
         tabHost.setType(MaterialTabHost.Type.FullScreenWidth);
 //        tabHost.setType(MaterialTabHost.Type.Centered);
 //        tabHost.setType(MaterialTabHost.Type.LeftOffset);
@@ -44,7 +54,7 @@ public class DetailsActivity extends AppCompatActivity {
             tabHost.addTab(pagerAdapter.getPageTitle(i));
         }
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(tabHost);
 
@@ -72,7 +82,7 @@ public class DetailsActivity extends AppCompatActivity {
                 case 1: return new DailyWeatherFragment();
                 case 2: return new HourlyWeatherFragment();
                 case 3: return new ChartFragment();
-                default: return PlaceholderFragment.newInstance(position+1);
+                default: return null;
             }
         }
 
@@ -100,35 +110,7 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
 
-        public PlaceholderFragment() {
-        }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_sample, container, false);
-            TextView tv = (TextView) rootView.findViewById(R.id.section_label);
-            tv.setText("Here is page " + getArguments().getInt(ARG_SECTION_NUMBER));
-            return rootView;
-        }
-    }
 }

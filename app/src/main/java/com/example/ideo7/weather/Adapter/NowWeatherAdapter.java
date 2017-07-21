@@ -8,24 +8,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ideo7.weather.Activity.DetailsActivity;
-import com.example.ideo7.weather.Model.Convert;
 import com.example.ideo7.weather.Model.ForecastNowWeatherResponse;
 
 import com.example.ideo7.weather.R;
-import com.github.aakira.expandablelayout.ExpandableLayout;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -48,21 +45,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         @BindView(R.id.temp) TextView temp;
         @BindView(R.id.date) TextView date;
         @BindView(R.id.checked) CheckBox checked;
-        @BindView(R.id.wind) TextView wind;
-        @BindView(R.id.cloud) TextView cloud;
-        @BindView(R.id.pressure) TextView pressure;
-        @BindView(R.id.humidity) TextView humidity;
-        @BindView(R.id.sunrise) TextView sunrise;
-        @BindView(R.id.sunset) TextView sunset;
-        @BindView(R.id.geocords) TextView geocords;
-        @BindView(R.id.rain) TextView rain;
-        @BindView(R.id.snow) TextView snow;
-        @BindView(R.id.windLayout) LinearLayout windLayout;
-        @BindView(R.id.cloudLayout) LinearLayout cloudLayout;
-        @BindView(R.id.rainLayout) LinearLayout rainLayout;
-        @BindView(R.id.snowLayout) LinearLayout snowLayout;
-        @BindView(R.id.button) Button button;
-        @BindView(R.id.expandableLayout1) ExpandableLayout expandableLayout1;
+        @BindView(R.id.weather) TextView weather;
         @BindView(R.id.linearLayout) LinearLayout linearLayout;
         public MyViewHolder(View view) {
             super(view);
@@ -93,79 +76,21 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         final ForecastNowWeatherResponse forecastNowWeatherResponse = list.get(position);
         holder.city.setText(forecastNowWeatherResponse.getName());
         holder.temp.setText(Math.round(forecastNowWeatherResponse.getMain().getTemp())+holder.itemView.getContext().getResources().getString(R.string.degrees));
-        if (forecastNowWeatherResponse.getWind()!=null) {
-            holder.wind.setText(String.format("%.2f m/s", forecastNowWeatherResponse.getWind().getSpeed()));
-            if (forecastNowWeatherResponse.getWind().getDeg()!=null){
-                holder.wind.setText(holder.wind.getText().toString()+String.format(" %s (%.0f)", Convert.convertDegreeToCardinalDirection(forecastNowWeatherResponse.getWind().getDeg()), forecastNowWeatherResponse.getWind().getDeg()));
-            }
 
-        }
-        else{
-            holder.windLayout.setVisibility(View.GONE);
-        }
-        if (forecastNowWeatherResponse.getClouds()!=null){
-                holder.cloud.setText(String.format("%d %%", forecastNowWeatherResponse.getClouds().getAll()));
-                if (forecastNowWeatherResponse.getWeather().get(0).getId()>=800&& forecastNowWeatherResponse.getWeather().get(0).getId()<900){
-                    holder.cloud.setText(forecastNowWeatherResponse.getWeather().get(0).getDescription()+", "+holder.cloud.getText().toString());
-                }
-
-        }
-        else{
-          holder.cloudLayout.setVisibility(View.GONE);
-        }
-        if (forecastNowWeatherResponse.getRain()!=null){
-            holder.rain.setText(String.format("%.2f mm",forecastNowWeatherResponse.getRain().getLast3h()));
-            if (forecastNowWeatherResponse.getWeather().get(0).getId()>=300&& forecastNowWeatherResponse.getWeather().get(0).getId()<400){
-                holder.rain.setText(forecastNowWeatherResponse.getWeather().get(0).getDescription()+", "+holder.cloud.getText().toString());
-            }
-        }
-        else{
-            holder.rainLayout.setVisibility(View.GONE);
-        }
-        if (forecastNowWeatherResponse.getSnow()!=null){
-            holder.snow.setText(String.format("%.2f mm",forecastNowWeatherResponse.getSnow().getLast3h()));
-            if (forecastNowWeatherResponse.getWeather().get(0).getId()>=600&& forecastNowWeatherResponse.getWeather().get(0).getId()<700){
-                holder.snow.setText(forecastNowWeatherResponse.getWeather().get(0).getDescription()+", "+holder.cloud.getText().toString());
-            }
-        }
-        else{
-            holder.snowLayout.setVisibility(View.GONE);
-        }
-        if (forecastNowWeatherResponse.getMain().getHumidity()!=null){
-            holder.humidity.setText(String.format("%d %%", forecastNowWeatherResponse.getMain().getHumidity()));
-        }
-        if  (forecastNowWeatherResponse.getMain().getPressure()!=null){
-            holder.pressure.setText(String.format("%.0f hpa", forecastNowWeatherResponse.getMain().getPressure()));
-        }
-        holder.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                holder.expandableLayout1.toggle();
-            }
-        });
-        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//               Intent intent = new Intent(holder.itemView.getContext(), MainWeatherActivity.class);
-//               intent.putExtra("city", forecastNowWeatherResponse.getName());
-//               holder.itemView.getContext().startActivity(intent);
-                Intent intent = new Intent(holder.itemView.getContext(), DetailsActivity.class);
-                intent.putExtra("city", forecastNowWeatherResponse.getName());
-                intent.putExtra("country",forecastNowWeatherResponse.getSys().getCountry());
-                intent.putExtra("idcity",forecastNowWeatherResponse.getId());
-                holder.itemView.getContext().startActivity(intent);
-
-            }
-        });
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sunrise = new SimpleDateFormat("HH:mm");
-        sunrise.setTimeZone(cal.getTimeZone());
-        SimpleDateFormat sunset = new SimpleDateFormat("HH:mm");
-        sunset.setTimeZone(cal.getTimeZone());
-        holder.sunrise.setText(sunrise.format(new Date(forecastNowWeatherResponse.getSys().getSunrise()*1000L)));
-        Log.d("sunrise", forecastNowWeatherResponse.getSys().getSunrise().toString());
-        holder.sunset.setText(sunset.format(new Date(forecastNowWeatherResponse.getSys().getSunset()*1000L)));
-        holder.geocords.setText(forecastNowWeatherResponse.getCoord().toString());
+//        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////               Intent intent = new Intent(holder.itemView.getContext(), MainWeatherActivity.class);
+////               intent.putExtra("city", forecastNowWeatherResponse.getName());
+////               holder.itemView.getContext().startActivity(intent);
+//                Intent intent = new Intent(holder.itemView.getContext(), DetailsActivity.class);
+//                intent.putExtra("city", forecastNowWeatherResponse.getName());
+//                intent.putExtra("country",forecastNowWeatherResponse.getSys().getCountry());
+//                intent.putExtra("idcity",forecastNowWeatherResponse.getId());
+//                holder.itemView.getContext().startActivity(intent);
+//
+//            }
+//        });
         holder.date.setText(new SimpleDateFormat("HH:mm dd.MM.yyyy").format(new Date()));
         if (!favoriteCitys.contains(forecastNowWeatherResponse.getName())){
             holder.checked.setChecked(false);
@@ -173,17 +98,20 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         else {
             holder.checked.setChecked(true);
         }
-        holder.checked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.weather.setText(forecastNowWeatherResponse.getWeather().get(0).getDescription());
+        holder.checked.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked)
+            public void onClick(View v) {
+                if(((CheckBox)v).isChecked())
                 {
 
                     favoriteCitys.add(holder.city.getText().toString());
+                    Toast.makeText(holder.itemView.getContext(),String.format("%s added to favorites.",forecastNowWeatherResponse.getName()),Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
                     favoriteCitys.remove(holder.city.getText().toString());
+                    Toast.makeText(holder.itemView.getContext(),String.format("%s removed from favorites.",forecastNowWeatherResponse.getName()),Toast.LENGTH_SHORT).show();
                 }
                 Log.d("citys",favoriteCitys.toString());
             }

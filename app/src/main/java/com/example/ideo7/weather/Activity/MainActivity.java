@@ -1,5 +1,7 @@
 package com.example.ideo7.weather.Activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -9,13 +11,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
 import com.example.ideo7.weather.Model.Convert;
+import com.example.ideo7.weather.Model.ForecastDailyResponse;
 import com.example.ideo7.weather.Model.ForecastNowWeatherResponse;
 import com.example.ideo7.weather.R;
 import com.example.ideo7.weather.Adapter.NowWeatherAdapter;
@@ -25,21 +31,26 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.github.codefalling.recyclerviewswipedismiss.SwipeDismissRecyclerViewTouchListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 
 public class MainActivity extends AppCompatActivity {
 
 
-    @BindView(R.id.searchEditText) EditText editText;
-    @BindView(R.id.searchButton) Button button;
-    @BindView(R.id.recyclerView) RecyclerView recyclerView;
+    @BindView(R.id.searchEditText)
+    EditText editText;
+    @BindView(R.id.searchButton)
+    Button button;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
     private ArrayList<ForecastNowWeatherResponse> forecastNowWeatherResponses;
     private NowWeatherAdapter nowWeatherAdapter;
     private ArrayList<String> citys;
     private ArrayList<String> favoritescitys;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +60,10 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!editText.getText().toString().isEmpty() ) {
-                        searchWeather(editText.getText().toString());
+                if (!editText.getText().toString().isEmpty()) {
+                    searchWeather(editText.getText().toString());
+                    editText.requestFocus();
+                    Convert.hideSoftKeyboard(MainActivity.this);
                 }
             }
         });
@@ -60,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
         sharedEditor = sharedPreferences.edit();
         Gson gson = new Gson();
         String json = sharedPreferences.getString("json", null);
-        if (json!=null){
+        if (json != null) {
             ArrayList<String> arrayList = gson.fromJson(json, String.class.getGenericSuperclass());
-            for (int i=0;i<arrayList.size();i++){
+            for (int i = 0; i < arrayList.size(); i++) {
                 searchWeather(arrayList.get(i));
             }
             //citys.addAll(arrayList);
@@ -72,24 +85,70 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        nowWeatherAdapter = new NowWeatherAdapter(forecastNowWeatherResponses,favoritescitys);
+        nowWeatherAdapter = new NowWeatherAdapter(forecastNowWeatherResponses, favoritescitys);
         recyclerView.setAdapter(nowWeatherAdapter);
+        SwipeDismissRecyclerViewTouchListener listener = new SwipeDismissRecyclerViewTouchListener.Builder(
+                recyclerView,
+                new SwipeDismissRecyclerViewTouchListener.DismissCallbacks() {
+                    @Override
+                    public boolean canDismiss(int position) {
+                        //recyclerView.removeViewAt(position);
+                        return true;
+                    }
+
+                    @Override
+                    public void onDismiss(View view) {
+                        String text = ((TextView) view.findViewById(R.id.city)).getText().toString();
+                        for (int i = 0; i < forecastNowWeatherResponses.size(); i++) {
+                            if (forecastNowWeatherResponses.get(i).getName().equals(text)) {
+                                forecastNowWeatherResponses.remove(i);
+                                if (((CheckBox) view.findViewById(R.id.checked)).isChecked())
+                                Toast.makeText(getApplicationContext(),"Rzeszów removed from favorites",Toast.LENGTH_SHORT).show();
+                            }
+//                            Log.d("ondissmis", String.valueOf(forecastNowWeatherResponses.get(i).equals(((TextView)view.findViewById(R.id.city)).getText().toString())));
+                        }
+                        citys.remove(text);
+                        favoritescitys.remove(text);
+                        nowWeatherAdapter.notifyDataSetChanged();
+                        Log.d("ondissmis", forecastNowWeatherResponses.toString());
+                        Log.d("ondissmis", ((TextView) view.findViewById(R.id.city)).getText().toString());
+
+                    }
+                })
+                .setIsVertical(false)
+                .setItemTouchCallback(
+                        new SwipeDismissRecyclerViewTouchListener.OnItemTouchCallBack() {
+                            @Override
+                            public void onTouch(int index) {
+                                // Do what you want when item be touched
+                            }
+                        })
+                .setItemClickCallback(new SwipeDismissRecyclerViewTouchListener.OnItemClickCallBack() {
+                    @Override
+                    public void onClick(int position) {
+                        Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
+                        intent.putExtra("city", forecastNowWeatherResponses.get(position).getName());
+                        intent.putExtra("country", forecastNowWeatherResponses.get(position).getSys().getCountry());
+                        intent.putExtra("idcity", forecastNowWeatherResponses.get(position).getId());
+                        startActivity(intent);
+                    }
+                }).create();
+        recyclerView.setOnTouchListener(listener);
+
     }
 
-    public void searchWeather(final String city)
-    {
+    public void searchWeather(final String city) {
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city,getResources().getString(R.string.appid),getResources().getString(R.string.units), Convert.getlang());
+        Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city, getResources().getString(R.string.appid), getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastNowWeatherResponse>() {
             @Override
             public void onResponse(Call<ForecastNowWeatherResponse> call, retrofit2.Response<ForecastNowWeatherResponse> response) {
-                if (response.isSuccessful()){
-                    if (!citys.contains(response.body().getName())){
-                        forecastNowWeatherResponses.add(response.body());
+                if (response.isSuccessful()) {
+                    if (!citys.contains(response.body().getName())) {
+                        forecastNowWeatherResponses.add(0, response.body());
                         nowWeatherAdapter.notifyDataSetChanged();
-                    }
-                    else{
-                        Toast.makeText(getApplicationContext(),"City is on the list.",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "City is on the list.", Toast.LENGTH_SHORT).show();
                     }
                     citys.add(response.body().getName());
 
@@ -98,14 +157,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ForecastNowWeatherResponse> call, Throwable t) {
-                Log.d("error",t.getLocalizedMessage());
+                Log.d("error", t.getLocalizedMessage());
             }
         });
     }
+
     @Override
     protected void onPause() {
         super.onPause();
-        sharedEditor.putString("json",new Gson().toJson(favoritescitys));
+        sharedEditor.putString("json", new Gson().toJson(favoritescitys));
         sharedEditor.commit();
     }
 }

@@ -53,7 +53,7 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
         final HourlyWeather hourlyWeather = list.get(position);
         Picasso.with(holder.itemView.getContext())
                 .load(String.format("https://openweathermap.org/img/w/%s.png", hourlyWeather.getWeather().get(0).getIcon()))
-                .resize(100, 100)
+                .resize(50, 50)
                 .into(holder.weatherIcon);
         holder.wind.setText(hourlyWeather.getWind()!=null? hourlyWeather.getWind().getSpeed().toString()+" m/s":"0 m/s");
         holder.temp.setText(hourlyWeather.getMain().getTemp().toString()+holder.itemView.getContext().getResources().getString(R.string.degrees));

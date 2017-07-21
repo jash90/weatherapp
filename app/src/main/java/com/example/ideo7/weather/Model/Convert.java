@@ -1,5 +1,8 @@
 package com.example.ideo7.weather.Model;
 
+import android.app.Activity;
+import android.view.inputmethod.InputMethodManager;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -140,4 +143,13 @@ public class Convert {
         List<String> langs =  Arrays.asList(lang);
         return langs.contains(Locale.getDefault().getLanguage())?Locale.getDefault().getLanguage():"en";
     }
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager)
+                activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (activity.getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
+                    0);
+        }
+    }
+
 }
