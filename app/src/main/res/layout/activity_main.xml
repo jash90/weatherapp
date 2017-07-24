@@ -20,13 +20,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:maxLines="1"
+        android:inputType="text"
+        android:scrollHorizontally="false"
+        android:ellipsize="end"
         android:id="@+id/searchEditText"
         />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search"
-        android:id="@+id/searchButton"/>
+        android:text="@string/search"
+        android:id="@+id/searchButton"
+        android:textSize="12dp"/>
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"

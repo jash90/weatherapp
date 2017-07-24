@@ -3,6 +3,7 @@ package com.example.ideo7.weather.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -198,5 +199,10 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         sharedEditor.putString("json", new Gson().toJson(favoritescitys));
         sharedEditor.commit();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 }

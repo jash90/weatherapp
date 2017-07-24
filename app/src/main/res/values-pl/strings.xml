@@ -25,4 +25,5 @@
     <string name="today">Dzisiaj</string>
     <string name="degrees">°C</string>
     <string name="clouds">zachmurzenie</string>
+    <string name="search">Szukaj</string>
 </resources>
