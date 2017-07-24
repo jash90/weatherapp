@@ -83,6 +83,10 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
             sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
             sharedEditor = sharedPreferences.edit();
             chart.clear();
+            dailyWeathers.clear();
+            hourlyWeathers.clear();
+            dailyWeatherAdapter.notifyDataSetChanged();
+            hourlyWeatherAdapter.notifyDataSetChanged();
             if (sharedPreferences.getString("city",null)!=null) {
                 getForecastDaily(sharedPreferences.getString("city",null));
                 getForecastHourly(sharedPreferences.getString("city",null));
