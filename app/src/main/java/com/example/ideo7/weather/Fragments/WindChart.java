@@ -1,7 +1,9 @@
 package com.example.ideo7.weather.Fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -50,6 +52,22 @@ public class WindChart extends Fragment {
     LineChart chart;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
+    private IntentFilter intentFilter = new IntentFilter("menu");
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+            sharedEditor = sharedPreferences.edit();
+            chart.clear();
+            if (sharedPreferences.getString("city",null)!=null) {
+                getForecast(sharedPreferences.getString("city",null));
+            }
+            else{
+                Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    };
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -164,6 +182,8 @@ public class WindChart extends Fragment {
                     chart.setData(lineData);
                     YAxis leftAxis = chart.getAxisLeft();
                     leftAxis.setAxisMaximum(max.floatValue() + 20f);
+                    chart.getData().notifyDataChanged();
+                    chart.notifyDataSetChanged();
                     chart.invalidate();
                 }
 
@@ -176,5 +196,18 @@ public class WindChart extends Fragment {
                 Log.d("log",t.getLocalizedMessage());
             }
         });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+
+
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(broadcastReceiver);
+        super.onPause();
     }
 }

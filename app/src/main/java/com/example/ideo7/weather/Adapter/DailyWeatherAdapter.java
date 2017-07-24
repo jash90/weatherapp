@@ -78,8 +78,6 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
 
         holder.description.setText(dailyWeather.getWeather().get(0).getDescription());
         DateTime dateTime = new DateTime(dailyWeather.getDt()*1000L);
-        Log.d("datetime1",dateTime.toLocalDate().toString());
-        Log.d("datetime2", String.valueOf(DateTime.now().toLocalDate()));
         if (new DateTime(dailyWeather.getDt()*1000L).toLocalDate().compareTo(DateTime.now().toLocalDate())==0){
             holder.today.setVisibility(View.VISIBLE);
             holder.linearLayout.setBackgroundColor(Color.rgb(221,221,221));

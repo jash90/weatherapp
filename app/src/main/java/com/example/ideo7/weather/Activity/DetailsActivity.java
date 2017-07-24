@@ -68,7 +68,9 @@ public class DetailsActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 sharedEditor.putString("city",item.toString());
                 sharedEditor.commit();
-                sendBroadcast(new Intent("menu"));
+                Intent intent = new Intent();
+                intent.setAction("menu");
+                sendBroadcast(intent);
                 toolbar.setTitle(item.toString());
                 //finish();
                 //startActivity(getIntent());

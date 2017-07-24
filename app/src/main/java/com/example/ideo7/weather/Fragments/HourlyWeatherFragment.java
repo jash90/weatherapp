@@ -21,12 +21,16 @@ import android.widget.Toast;
 
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
+import com.example.ideo7.weather.Adapter.DailyWeatherAdapter;
+import com.example.ideo7.weather.Adapter.HourlyWeatherAdapter;
 import com.example.ideo7.weather.Adapter.HourlyWeatherFragmentAdapter;
+import com.example.ideo7.weather.ChartElement.MyMarkerView;
 import com.example.ideo7.weather.Model.Convert;
 import com.example.ideo7.weather.Model.ForecastHourlyResponse;
 import com.example.ideo7.weather.Model.HourlyWeather;
 import com.example.ideo7.weather.R;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.YAxis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +56,28 @@ public class HourlyWeatherFragment extends Fragment{
     HourlyWeatherFragmentAdapter hourlyWeatherAdapter;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
+    private IntentFilter intentFilter = new IntentFilter("menu");
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+            sharedEditor = sharedPreferences.edit();
+            hourlyWeathers= new ArrayList<>();
+            RecyclerView.LayoutManager hourlyLayoutManager = new LinearLayoutManager(getContext());
+            recyclerView.setLayoutManager(hourlyLayoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            hourlyWeatherAdapter = new HourlyWeatherFragmentAdapter(hourlyWeathers);
+            recyclerView.setAdapter(hourlyWeatherAdapter);
+
+            if (sharedPreferences.getString("city",null)!=null) {
+                getForecast(sharedPreferences.getString("city",null));
+            }
+            else{
+                Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    };
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,6 +121,19 @@ public class HourlyWeatherFragment extends Fragment{
                 Log.d("log",t.getLocalizedMessage());
             }
         });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+
+
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(broadcastReceiver);
+        super.onPause();
     }
 
 }

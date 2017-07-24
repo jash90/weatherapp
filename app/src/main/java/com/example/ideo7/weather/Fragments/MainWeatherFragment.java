@@ -82,47 +82,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
         public void onReceive(Context context, Intent intent) {
             sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
             sharedEditor = sharedPreferences.edit();
-
-            chart.setDrawGridBackground(false);
-            chart.getDescription().setEnabled(false);
-            chart.setTouchEnabled(true);
-            chart.setDragEnabled(true);
-            chart.setScaleEnabled(true);
-
-            hourlyWeathers = new ArrayList<>();
-            dailyWeathers = new ArrayList<>();
-            RecyclerView.LayoutManager hourlyLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-            hourlyWeather.setLayoutManager(hourlyLayoutManager);
-            hourlyWeather.setItemAnimator(new DefaultItemAnimator());
-            hourlyWeatherAdapter = new HourlyWeatherAdapter(hourlyWeathers);
-            hourlyWeather.setAdapter(hourlyWeatherAdapter);
-
-            RecyclerView.LayoutManager dailyLayoutManager = new LinearLayoutManager(getContext());
-            dailyWeather.setLayoutManager(dailyLayoutManager);
-            dailyWeather.setItemAnimator(new DefaultItemAnimator());
-            dailyWeatherAdapter = new DailyWeatherAdapter(dailyWeathers);
-            dailyWeather.setAdapter(dailyWeatherAdapter);
-            Log.d("recycler", String.valueOf(hourlyWeather.getWidth()));
-
-            chart.setPinchZoom(true);
-            MyMarkerView mv = new MyMarkerView(getContext(), R.layout.marker_view);
-            mv.setChartView(chart);
-            chart.setMarker(mv);
-
-            YAxis leftAxis = chart.getAxisLeft();
-            leftAxis.removeAllLimitLines();
-            leftAxis.setAxisMaximum(50f);
-            leftAxis.setAxisMinimum(-50f);
-            // leftAxis.enableGridDashedLine(10f, 10f, 0f);
-            leftAxis.setDrawZeroLine(false);
-            //leftAxis.setDrawLimitLinesBehindData(true);
-
-            YAxis rightAxis = chart.getAxisRight();
-            rightAxis.removeAllLimitLines();
-            rightAxis.setAxisMaximum(10f);
-            rightAxis.setAxisMinimum(0f);
-            //  rightAxis.enableGridDashedLine(10f, 10f, 0f);
-            rightAxis.setDrawZeroLine(false);
+            chart.clear();
             if (sharedPreferences.getString("city",null)!=null) {
                 getForecastDaily(sharedPreferences.getString("city",null));
                 getForecastHourly(sharedPreferences.getString("city",null));
@@ -131,14 +91,10 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                 Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
             }
             title.setText(String.format(getString(R.string.weatherAndForecastsIn),sharedPreferences.getString("city",null)));
-            //chart.animateX(2500);
-            Legend l = chart.getLegend();
-            l.setForm(Legend.LegendForm.CIRCLE);
-            chart.notifyDataSetChanged();
-            chart.getBarData().notifyDataChanged();
-            chart.invalidate();
+
         }
     };
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container,false);
@@ -285,15 +241,20 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
 
                     LineData data = new LineData(dataSets);
                     CombinedData combinedData = new CombinedData();
-                    combinedData.setData(data);
                     combinedData.setData(d);
+                    combinedData.setData(data);
+                    Log.d("d",d.toString());
                     chart.setData(combinedData);
                     YAxis rightAxis = chart.getAxisRight();
                     rightAxis.setAxisMaximum(max.floatValue()+20f);
+                    chart.notifyDataSetChanged();
                     chart.invalidate();
                 }
+                chart.getBarData().notifyDataChanged();
                 chart.notifyDataSetChanged();
                 chart.invalidate();
+                hourlyWeatherAdapter.notifyDataSetChanged();
+                hourlyWeather.refreshDrawableState();
             }
 
             @Override
@@ -315,6 +276,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                     dailyWeatherAdapter.notifyDataSetChanged();
                 }
                 dailyWeatherAdapter.notifyDataSetChanged();
+                dailyWeather.refreshDrawableState();
             }
 
             @Override
@@ -327,7 +289,6 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
     public void onResume() {
         super.onResume();
         getActivity().registerReceiver(broadcastReceiver, intentFilter);
-        //nie interesuje nas tutaj czym jest filter, widzimy jednak że rejestrujemy nasz receiver w kodzie.
     }
 
 
@@ -335,7 +296,6 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
     @Override
     public void onPause() {
         getActivity().unregisterReceiver(broadcastReceiver);
-        // trzeba zawsze po sobie posprzątać w tym przypadku wyrejestrować receiver.
         super.onPause();
     }
 

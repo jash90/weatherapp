@@ -88,8 +88,6 @@ public class HourlyWeatherFragmentAdapter extends RecyclerView.Adapter<RecyclerV
                         .resize(100, 100)
                         .into(titleHolder.icon);
                 DateTime dateTime = new DateTime(hourlyWeather.getDt()*1000L);
-                Log.d("datetime1",dateTime.toLocalDate().toString());
-                Log.d("datetime2", String.valueOf(DateTime.now().toLocalDate()));
                 if (new DateTime(hourlyWeather.getDt()*1000L).toLocalDate().compareTo(DateTime.now().toLocalDate())==0){
                     titleHolder.title.setText(String.format("%s %s",titleHolder.title.getText(),titleHolder.itemView.getResources().getString(R.string.today)));
                 }

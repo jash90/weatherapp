@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -13,6 +14,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ideo7.weather.Activity.DetailsActivity;
+import com.example.ideo7.weather.Adapter.HourlyWeatherFragmentAdapter;
 import com.example.ideo7.weather.ChartElement.MyMarkerView;
 import com.example.ideo7.weather.Model.DailyWeather;
 import com.example.ideo7.weather.R;
@@ -32,6 +37,7 @@ import com.github.mikephil.charting.components.YAxis;
 import net.yanzm.mth.MaterialTabHost;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -48,6 +54,19 @@ public class ChartFragment extends Fragment {
     ArrayList<DailyWeather> dailyWeathers;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
+    private IntentFilter intentFilter = new IntentFilter("menu");
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+            sharedEditor = sharedPreferences.edit();
+            if (sharedPreferences.getString("city",null)!=null) {
+                title.setText(String.format(getString(R.string.chartWeatherAndForecastIn),sharedPreferences.getString("city",null)));
+            }
+
+        }
+    };
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chart, container,false);
@@ -67,6 +86,8 @@ public class ChartFragment extends Fragment {
         for (int i=0;i<tabHost.getTabWidget().getChildCount();i++) {
             if (tabHost.getTabWidget().getChildAt(i) instanceof TextView) {
                 TextView t = (TextView) tabHost.getTabWidget().getChildAt(i);
+                t.setBackgroundColor(Color.WHITE);
+                t.setTextColor(Color.BLACK);
                 t.setTextSize(12);
             }
         }
@@ -123,6 +144,19 @@ public class ChartFragment extends Fragment {
             }
             return null;
         }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+
+
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(broadcastReceiver);
+        super.onPause();
     }
 
 

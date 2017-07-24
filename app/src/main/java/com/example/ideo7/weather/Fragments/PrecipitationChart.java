@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
+import com.example.ideo7.weather.Adapter.HourlyWeatherFragmentAdapter;
 import com.example.ideo7.weather.ChartElement.LabelFormatter;
 import com.example.ideo7.weather.ChartElement.MyMarkerView;
 import com.example.ideo7.weather.Model.Convert;
@@ -56,6 +60,22 @@ public class PrecipitationChart extends Fragment {
     LineChart chart;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
+    private IntentFilter intentFilter = new IntentFilter("menu");
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+            sharedEditor = sharedPreferences.edit();
+
+            if (sharedPreferences.getString("city",null)!=null) {
+                getForecast(sharedPreferences.getString("city",null));
+            }
+            else{
+                Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    };
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -98,9 +118,6 @@ public class PrecipitationChart extends Fragment {
         //chart.animateX(2500);
         Legend l = chart.getLegend();
         l.setForm(Legend.LegendForm.CIRCLE);
-        chart.invalidate();
-        Log.d("log","precipitationchart");
-
 
         return v;
     }
@@ -169,6 +186,7 @@ public class PrecipitationChart extends Fragment {
                         chart.setData(lineData);
                         YAxis leftAxis = chart.getAxisLeft();
                         leftAxis.setAxisMaximum(max.floatValue() + 20f);
+                        chart.getData().notifyDataChanged();
                         chart.notifyDataSetChanged();
                         chart.invalidate();
                     }
@@ -182,6 +200,19 @@ public class PrecipitationChart extends Fragment {
                 Log.d("log",t.getLocalizedMessage());
             }
         });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+
+
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(broadcastReceiver);
+        super.onPause();
     }
 
 }

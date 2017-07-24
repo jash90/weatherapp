@@ -77,21 +77,6 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         final ForecastNowWeatherResponse forecastNowWeatherResponse = list.get(position);
         holder.city.setText(forecastNowWeatherResponse.getName());
         holder.temp.setText(Math.round(forecastNowWeatherResponse.getMain().getTemp())+holder.itemView.getContext().getResources().getString(R.string.degrees));
-
-//        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////               Intent intent = new Intent(holder.itemView.getContext(), MainWeatherActivity.class);
-////               intent.putExtra("city", forecastNowWeatherResponse.getName());
-////               holder.itemView.getContext().startActivity(intent);
-//                Intent intent = new Intent(holder.itemView.getContext(), DetailsActivity.class);
-//                intent.putExtra("city", forecastNowWeatherResponse.getName());
-//                intent.putExtra("country",forecastNowWeatherResponse.getSys().getCountry());
-//                intent.putExtra("idcity",forecastNowWeatherResponse.getId());
-//                holder.itemView.getContext().startActivity(intent);
-//
-//            }
-//        });
         holder.date.setText(new SimpleDateFormat("HH:mm dd.MM.yyyy").format(new Date()));
         if (!favoriteCitys.contains(forecastNowWeatherResponse.getName()+","+forecastNowWeatherResponse.getSys().getCountry())){
             holder.checked.setChecked(false);
@@ -114,7 +99,6 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
                     favoriteCitys.remove(forecastNowWeatherResponse.getName()+","+forecastNowWeatherResponse.getSys().getCountry());
                     Toast.makeText(holder.itemView.getContext(),String.format("%s removed from favorites.",forecastNowWeatherResponse.getName()),Toast.LENGTH_SHORT).show();
                 }
-                Log.d("citys",favoriteCitys.toString());
             }
         });
         Picasso.with(holder.itemView.getContext())

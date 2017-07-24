@@ -54,6 +54,22 @@ public class PressureChart extends Fragment {
     LineChart chart;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
+    private IntentFilter intentFilter = new IntentFilter("menu");
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+            sharedEditor = sharedPreferences.edit();
+
+            if (sharedPreferences.getString("city",null)!=null) {
+                getForecast(sharedPreferences.getString("city",null));
+            }
+            else{
+                Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    };
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -170,6 +186,7 @@ public class PressureChart extends Fragment {
                     YAxis leftAxis = chart.getAxisLeft();
                     leftAxis.setAxisMinimum(min.floatValue() - 20f);
                     leftAxis.setAxisMaximum(max.floatValue() + 20f);
+                    chart.getData().notifyDataChanged();
                     chart.notifyDataSetChanged();
                     chart.invalidate();
                 }
@@ -183,6 +200,19 @@ public class PressureChart extends Fragment {
                 Log.d("log",t.getLocalizedMessage());
             }
         });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+
+
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(broadcastReceiver);
+        super.onPause();
     }
 
 }

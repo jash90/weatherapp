@@ -23,6 +23,7 @@ import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
 import com.example.ideo7.weather.Adapter.DailyWeatherAdapter;
 import com.example.ideo7.weather.Adapter.HourlyWeatherAdapter;
+import com.example.ideo7.weather.Adapter.HourlyWeatherFragmentAdapter;
 import com.example.ideo7.weather.ChartElement.LabelFormatter;
 import com.example.ideo7.weather.ChartElement.MyMarkerView;
 import com.example.ideo7.weather.Model.Convert;
@@ -62,6 +63,24 @@ public class DailyWeatherFragment extends Fragment {
     ArrayList<DailyWeather> dailyWeathers;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
+    private IntentFilter intentFilter = new IntentFilter("menu");
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+            sharedEditor = sharedPreferences.edit();
+            chart.clear();
+
+            if (sharedPreferences.getString("city",null)!=null) {
+                getForecastDaily(sharedPreferences.getString("city",null));
+            }
+            else{
+                Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    };
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_daily_weather, container,false);
@@ -69,6 +88,7 @@ public class DailyWeatherFragment extends Fragment {
         setHasOptionsMenu(true);
         sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
         sharedEditor = sharedPreferences.edit();
+        chart.clear();
       //  chart.setOnChartGestureListener(this);
        // chart.setOnChartValueSelectedListener(chart.this);
         chart.setDrawGridBackground(false);
@@ -107,11 +127,8 @@ public class DailyWeatherFragment extends Fragment {
             Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
         }
         //chart.animateX(2500);
-        chart.refreshDrawableState();
         Legend l = chart.getLegend();
         l.setForm(Legend.LegendForm.CIRCLE);
-        chart.notifyDataSetChanged();
-        chart.invalidate();
         return v;
     }
     public void getForecastDaily(String city){
@@ -132,7 +149,6 @@ public class DailyWeatherFragment extends Fragment {
                         tempvalues.add(new Entry(i, list.get(i).getTemp().getDay().floatValue()));
                         if (list.get(i).getRain() != null) {
                             rainvalues.add(new BarEntry(i, list.get(i).getRain().floatValue()));
-                            Log.d("rainValues", list.get(i).getRain().toString());
                             if (max<list.get(i).getRain().floatValue()){
                                 max=list.get(i).getRain();
                             }
@@ -144,7 +160,6 @@ public class DailyWeatherFragment extends Fragment {
                         labels.add(format.format(new Date(list.get(i).getDt() * 1000L)));
 
                     }
-                    Log.d("log",labels.toString());
                     LineDataSet set1;
 
                     if (chart.getData() != null &&
@@ -204,6 +219,21 @@ public class DailyWeatherFragment extends Fragment {
                 Log.d("log",t.getLocalizedMessage());
             }
         });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+        //nie interesuje nas tutaj czym jest filter, widzimy jednak że rejestrujemy nasz receiver w kodzie.
+    }
+
+
+
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(broadcastReceiver);
+        // trzeba zawsze po sobie posprzątać w tym przypadku wyrejestrować receiver.
+        super.onPause();
     }
 
 

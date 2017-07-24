@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -33,7 +32,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.listener.ChartTouchListener;
 
 import org.joda.time.LocalDate;
 
@@ -54,6 +52,22 @@ public class TemperatureChart extends Fragment{
     LineChart chart;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
+    private IntentFilter intentFilter = new IntentFilter("menu");
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+            sharedEditor = sharedPreferences.edit();
+            chart.clear();
+            if (sharedPreferences.getString("city",null)!=null) {
+                getForecast(sharedPreferences.getString("city",null));
+            }
+            else{
+                Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    };
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -163,6 +177,7 @@ public class TemperatureChart extends Fragment{
                     YAxis leftAxis = chart.getAxisLeft();
                     leftAxis.setAxisMinimum(min.floatValue() - 20f);
                     leftAxis.setAxisMaximum(max.floatValue() + 20f);
+                    chart.getLineData().notifyDataChanged();
                     chart.notifyDataSetChanged();
                     chart.invalidate();
                 }
@@ -177,5 +192,17 @@ public class TemperatureChart extends Fragment{
             }
         });
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+    }
 
+
+
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(broadcastReceiver);
+        super.onPause();
+    }
 }
