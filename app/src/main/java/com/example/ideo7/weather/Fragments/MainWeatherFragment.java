@@ -1,7 +1,12 @@
 package com.example.ideo7.weather.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -69,11 +74,78 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
     ArrayList<DailyWeather> dailyWeathers;
     HourlyWeatherAdapter hourlyWeatherAdapter;
     DailyWeatherAdapter dailyWeatherAdapter;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedEditor;
+    private IntentFilter intentFilter = new IntentFilter("menu");
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+            sharedEditor = sharedPreferences.edit();
+
+            chart.setDrawGridBackground(false);
+            chart.getDescription().setEnabled(false);
+            chart.setTouchEnabled(true);
+            chart.setDragEnabled(true);
+            chart.setScaleEnabled(true);
+
+            hourlyWeathers = new ArrayList<>();
+            dailyWeathers = new ArrayList<>();
+            RecyclerView.LayoutManager hourlyLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            hourlyWeather.setLayoutManager(hourlyLayoutManager);
+            hourlyWeather.setItemAnimator(new DefaultItemAnimator());
+            hourlyWeatherAdapter = new HourlyWeatherAdapter(hourlyWeathers);
+            hourlyWeather.setAdapter(hourlyWeatherAdapter);
+
+            RecyclerView.LayoutManager dailyLayoutManager = new LinearLayoutManager(getContext());
+            dailyWeather.setLayoutManager(dailyLayoutManager);
+            dailyWeather.setItemAnimator(new DefaultItemAnimator());
+            dailyWeatherAdapter = new DailyWeatherAdapter(dailyWeathers);
+            dailyWeather.setAdapter(dailyWeatherAdapter);
+            Log.d("recycler", String.valueOf(hourlyWeather.getWidth()));
+
+            chart.setPinchZoom(true);
+            MyMarkerView mv = new MyMarkerView(getContext(), R.layout.marker_view);
+            mv.setChartView(chart);
+            chart.setMarker(mv);
+
+            YAxis leftAxis = chart.getAxisLeft();
+            leftAxis.removeAllLimitLines();
+            leftAxis.setAxisMaximum(50f);
+            leftAxis.setAxisMinimum(-50f);
+            // leftAxis.enableGridDashedLine(10f, 10f, 0f);
+            leftAxis.setDrawZeroLine(false);
+            //leftAxis.setDrawLimitLinesBehindData(true);
+
+            YAxis rightAxis = chart.getAxisRight();
+            rightAxis.removeAllLimitLines();
+            rightAxis.setAxisMaximum(10f);
+            rightAxis.setAxisMinimum(0f);
+            //  rightAxis.enableGridDashedLine(10f, 10f, 0f);
+            rightAxis.setDrawZeroLine(false);
+            if (sharedPreferences.getString("city",null)!=null) {
+                getForecastDaily(sharedPreferences.getString("city",null));
+                getForecastHourly(sharedPreferences.getString("city",null));
+            }
+            else{
+                Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
+            }
+            title.setText(String.format(getString(R.string.weatherAndForecastsIn),sharedPreferences.getString("city",null)));
+            //chart.animateX(2500);
+            Legend l = chart.getLegend();
+            l.setForm(Legend.LegendForm.CIRCLE);
+            chart.notifyDataSetChanged();
+            chart.getBarData().notifyDataChanged();
+            chart.invalidate();
+        }
+    };
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container,false);
         ButterKnife.bind(this,v);
-
+        setHasOptionsMenu(true);
+        sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        sharedEditor = sharedPreferences.edit();
         chart.setOnChartGestureListener(this);
         chart.setOnChartValueSelectedListener(this);
         chart.setDrawGridBackground(false);
@@ -118,24 +190,25 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
         rightAxis.setDrawZeroLine(false);
         //rightAxis.setDrawLimitLinesBehindData(true);
 
-        Intent intent =getActivity().getIntent();
-        if (intent.getIntExtra("idcity",0)!=0) {
-            getForecastHourly(intent.getIntExtra("idcity", 0));
-            getForecastDaily(intent.getIntExtra("idcity", 0));
+        if (sharedPreferences.getString("city",null)!=null) {
+            getForecastDaily(sharedPreferences.getString("city",null));
+            getForecastHourly(sharedPreferences.getString("city",null));
         }
         else{
             Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
         }
+        title.setText(String.format(getString(R.string.weatherAndForecastsIn),sharedPreferences.getString("city",null)));
         //chart.animateX(2500);
         Legend l = chart.getLegend();
         l.setForm(Legend.LegendForm.CIRCLE);
+        chart.notifyDataSetChanged();
         chart.invalidate();
         Log.d("recycler", String.valueOf(hourlyWeather.getWidth()));
         return v;
     }
-    private void getForecastHourly(Integer city){
+    private void getForecastHourly(String city){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastHourlyResponse> call = openWeather.getForecastId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units),10,Convert.getlang());
+        Call<ForecastHourlyResponse> call = openWeather.getForecast(city,getResources().getString(R.string.appid),getResources().getString(R.string.units),10,Convert.getlang());
         call.enqueue(new Callback<ForecastHourlyResponse>() {
             @Override
             public void onResponse(Call<ForecastHourlyResponse> call, Response<ForecastHourlyResponse> response) {
@@ -145,7 +218,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                     hourlyWeatherAdapter.notifyDataSetChanged();
                     Log.d("hw", hw.toString());
                 }
-                title.setText(String.format("Weather and forecasts in %s, %s",response.body().getCity().getName(),response.body().getCity().getCountry()));
+                hourlyWeatherAdapter.notifyDataSetChanged();
                 ArrayList<Entry> tempvalues = new ArrayList<Entry>();
                 ArrayList<BarEntry> rainvalues = new ArrayList<>();
                 final ArrayList<String> labels = new ArrayList<String>();
@@ -179,7 +252,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                     chart.getData().notifyDataChanged();
                     chart.notifyDataSetChanged();
                 } else {
-                    set1 = new LineDataSet(tempvalues, "Temperature");
+                    set1 = new LineDataSet(tempvalues, getString(R.string.temperature));
 
                     set1.setDrawIcons(false);
                     set1.setColor(Color.rgb(0,0,255));
@@ -195,7 +268,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                     xAxis.setValueFormatter(new LabelFormatter(labels));
 
 
-                    BarDataSet set2 = new BarDataSet(rainvalues, "Precipitation");
+                    BarDataSet set2 = new BarDataSet(rainvalues, getString(R.string.precipitation));
                     set2.setColor(Color.rgb(160,160,160));
                     set2.setValueTextColor(Color.rgb(160,160,160));
                     set2.setValueTextSize(10f);
@@ -219,6 +292,8 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                     rightAxis.setAxisMaximum(max.floatValue()+20f);
                     chart.invalidate();
                 }
+                chart.notifyDataSetChanged();
+                chart.invalidate();
             }
 
             @Override
@@ -228,9 +303,9 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
             }
         });
     }
-    public void getForecastDaily(Integer city){
+    public void getForecastDaily(String city){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastDailyResponse> call = openWeather.getForecastDailyId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units), Convert.getlang());
+        Call<ForecastDailyResponse> call = openWeather.getForecastDaily(city,getResources().getString(R.string.appid),getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastDailyResponse>() {
             @Override
             public void onResponse(Call<ForecastDailyResponse> call, Response<ForecastDailyResponse> response) {
@@ -239,6 +314,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                     dailyWeathers.add(dailyWeather);
                     dailyWeatherAdapter.notifyDataSetChanged();
                 }
+                dailyWeatherAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -247,6 +323,23 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
             }
         });
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+        //nie interesuje nas tutaj czym jest filter, widzimy jednak że rejestrujemy nasz receiver w kodzie.
+    }
+
+
+
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(broadcastReceiver);
+        // trzeba zawsze po sobie posprzątać w tym przypadku wyrejestrować receiver.
+        super.onPause();
+    }
+
+
 
     @Override
     public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {

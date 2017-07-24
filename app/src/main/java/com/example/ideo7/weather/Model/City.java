@@ -61,7 +61,11 @@ public class City {
         this.country = country;
         this.population = population;
     }
-
+    public City(String name, Coord coord, String country) {
+        this.name = name;
+        this.coord = coord;
+        this.country = country;
+    }
     @Override
     public String toString() {
         return "City{" +

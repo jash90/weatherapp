@@ -1,12 +1,18 @@
 package com.example.ideo7.weather.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -27,6 +33,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.ChartTouchListener;
 
 import org.joda.time.LocalDate;
 
@@ -45,12 +52,16 @@ import retrofit2.Response;
 public class TemperatureChart extends Fragment{
     @BindView(R.id.chart)
     LineChart chart;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedEditor;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.chart_layout,container,false);
         ButterKnife.bind(this,v);
-
+        setHasOptionsMenu(true);
+        sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        sharedEditor = sharedPreferences.edit();
         //chart.setOnChartGestureListener(this);
         //chart.setOnChartValueSelectedListener(this);
         chart.setDrawGridBackground(false);
@@ -77,9 +88,8 @@ public class TemperatureChart extends Fragment{
         rightAxis.setEnabled(false);
         //rightAxis.setDrawLimitLinesBehindData(true);
 
-        Intent intent =getActivity().getIntent();
-        if (intent.getIntExtra("idcity",0)!=0) {
-            getForecast(intent.getIntExtra("idcity", 0));
+        if (sharedPreferences.getString("city",null)!=null) {
+            getForecast(sharedPreferences.getString("city",null));
         }
         else{
             Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
@@ -93,9 +103,9 @@ public class TemperatureChart extends Fragment{
 
         return v;
     }
-    public void getForecast(Integer city){
+    public void getForecast(String city){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastHourlyResponse> call = openWeather.getForecastAllId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units), Convert.getlang());
+        Call<ForecastHourlyResponse> call = openWeather.getForecastAll(city,getResources().getString(R.string.appid),getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastHourlyResponse>() {
             @Override
             public void onResponse(Call<ForecastHourlyResponse> call, Response<ForecastHourlyResponse> response) {
@@ -129,7 +139,7 @@ public class TemperatureChart extends Fragment{
                     chart.getData().notifyDataChanged();
                     chart.notifyDataSetChanged();
                 } else {
-                    set1 = new LineDataSet(data, "Temperature");
+                    set1 = new LineDataSet(data, getString(R.string.temperature));
 
                     set1.setDrawIcons(false);
                     set1.setColor(Color.rgb(0, 0, 255));
@@ -153,6 +163,7 @@ public class TemperatureChart extends Fragment{
                     YAxis leftAxis = chart.getAxisLeft();
                     leftAxis.setAxisMinimum(min.floatValue() - 20f);
                     leftAxis.setAxisMaximum(max.floatValue() + 20f);
+                    chart.notifyDataSetChanged();
                     chart.invalidate();
                 }
 
@@ -166,4 +177,5 @@ public class TemperatureChart extends Fragment{
             }
         });
     }
+
 }

@@ -1,6 +1,8 @@
 package com.example.ideo7.weather.Adapter;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,8 @@ import android.widget.TextView;
 import com.example.ideo7.weather.Model.HourlyWeather;
 import com.example.ideo7.weather.R;
 import com.squareup.picasso.Picasso;
+
+import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,12 +60,13 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
                 .resize(50, 50)
                 .into(holder.weatherIcon);
         holder.wind.setText(hourlyWeather.getWind()!=null? hourlyWeather.getWind().getSpeed().toString()+" m/s":"0 m/s");
-        holder.temp.setText(hourlyWeather.getMain().getTemp().toString()+holder.itemView.getContext().getResources().getString(R.string.degrees));
+        holder.temp.setText(String.format("%.2f %s",hourlyWeather.getMain().getTemp(),holder.itemView.getContext().getResources().getString(R.string.degrees)));
         holder.pressure.setText(hourlyWeather.getMain().getPressure().toString()+" hpa");
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("HH:mm");
         format.setTimeZone(cal.getTimeZone());
         holder.hour.setText(format.format(new Date(hourlyWeather.getDt()*1000L)));
+
     }
 
     @Override

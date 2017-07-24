@@ -1,6 +1,7 @@
 package com.example.ideo7.weather.Adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,19 +81,25 @@ public class HourlyWeatherFragmentAdapter extends RecyclerView.Adapter<RecyclerV
                 titleHolder.title.setText(new DateTime(hourlyWeather.getDt()*1000L).toString("EEE MMM dd"));
                 titleHolder.date.setText(new DateTime(hourlyWeather.getDt()*1000L).toString("HH:mm"));
                 titleHolder.description.setText(hourlyWeather.getWeather().get(0).getDescription());
-                titleHolder.temp.setText(hourlyWeather.getMain().getTemp().toString());
-                titleHolder.weather.setText(String.format("%.2f m/s clouds: %d %% %.2f hpa",hourlyWeather.getWind().getSpeed(),hourlyWeather.getClouds().getAll(),hourlyWeather.getMain().getPressure()));
+                titleHolder.temp.setText(String.format("%.2f %s",hourlyWeather.getMain().getTemp(),holder.itemView.getResources().getString(R.string.degrees)));
+                titleHolder.weather.setText(String.format("%.2f m/s %s: %d %% %.2f hpa",hourlyWeather.getWind().getSpeed(),holder.itemView.getResources().getString(R.string.clouds),hourlyWeather.getClouds().getAll(),hourlyWeather.getMain().getPressure()));
                 Picasso.with(holder.itemView.getContext())
                         .load(String.format("https://openweathermap.org/img/w/%s.png", hourlyWeather.getWeather().get(0).getIcon()))
                         .resize(100, 100)
                         .into(titleHolder.icon);
+                DateTime dateTime = new DateTime(hourlyWeather.getDt()*1000L);
+                Log.d("datetime1",dateTime.toLocalDate().toString());
+                Log.d("datetime2", String.valueOf(DateTime.now().toLocalDate()));
+                if (new DateTime(hourlyWeather.getDt()*1000L).toLocalDate().compareTo(DateTime.now().toLocalDate())==0){
+                    titleHolder.title.setText(String.format("%s %s",titleHolder.title.getText(),titleHolder.itemView.getResources().getString(R.string.today)));
+                }
                 break;
             case 1:
                 WeatherHolder weatherHolder = (WeatherHolder) holder;
                 weatherHolder.date.setText(new DateTime(hourlyWeather.getDt()*1000L).toString("HH:mm"));
                 weatherHolder.description.setText(hourlyWeather.getWeather().get(0).getDescription());
-                weatherHolder.temp.setText(hourlyWeather.getMain().getTemp().toString());
-                weatherHolder.weather.setText(String.format("%.2f m/s clouds: %d %% %.2f hpa",hourlyWeather.getWind().getSpeed(),hourlyWeather.getClouds().getAll(),hourlyWeather.getMain().getPressure()));
+                weatherHolder.temp.setText(String.format("%.2f %s",hourlyWeather.getMain().getTemp(),holder.itemView.getResources().getString(R.string.degrees)));
+                weatherHolder.weather.setText(String.format("%.2f m/s %s: %d %% %.2f hpa",hourlyWeather.getWind().getSpeed(),holder.itemView.getResources().getString(R.string.clouds),hourlyWeather.getClouds().getAll(),hourlyWeather.getMain().getPressure()));
                 Picasso.with(holder.itemView.getContext())
                         .load(String.format("https://openweathermap.org/img/w/%s.png", hourlyWeather.getWeather().get(0).getIcon()))
                         .resize(100, 100)

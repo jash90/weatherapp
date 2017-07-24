@@ -1,6 +1,11 @@
 package com.example.ideo7.weather.Activity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -8,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,10 +26,16 @@ import com.example.ideo7.weather.Fragments.ChartFragment;
 import com.example.ideo7.weather.Fragments.DailyWeatherFragment;
 import com.example.ideo7.weather.Fragments.HourlyWeatherFragment;
 import com.example.ideo7.weather.Fragments.MainWeatherFragment;
+import com.example.ideo7.weather.Model.City;
+import com.example.ideo7.weather.Model.Clouds;
 import com.example.ideo7.weather.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import net.yanzm.mth.MaterialTabHost;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -34,6 +46,9 @@ public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.tabHost) MaterialTabHost tabHost;
     @BindView(R.id.viewPager) ViewPager viewPager;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedEditor;
+    private SectionsPagerAdapter pagerAdapter;
     private Menu menu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +56,41 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
         menu = toolbar.getMenu();
+        toolbar.setBackgroundResource(R.color.colorPrimary);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.menu,null));
+        }
+        else{
+            toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.menu));
+        }
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                sharedEditor.putString("city",item.toString());
+                sharedEditor.commit();
+                sendBroadcast(new Intent("menu"));
+                toolbar.setTitle(item.toString());
+                //finish();
+                //startActivity(getIntent());
+                return true;
+            }
+        });
+        sharedPreferences = getSharedPreferences("PREF",MODE_PRIVATE);
+        sharedEditor = sharedPreferences.edit();
+
         Intent intent = getIntent();
+        sharedEditor.putString("city",intent.getStringExtra("city")+","+intent.getStringExtra("country"));
+        sharedEditor.commit();
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setTitle(sharedPreferences.getString("city",null));
+        Gson gson = new Gson();
+        String favorites = intent.getStringExtra("favorites");
+        ArrayList<String> lista = gson.fromJson(favorites,String.class.getGenericSuperclass());
+        Log.d("s",lista.toString());
+        Log.d("s",favorites);
+        for(String s: lista){
+            menu.add(s);
+        }
         getSupportActionBar().hide();
         //setTitle(intent.getStringExtra("city")+","+intent.getStringExtra("country"));
 
@@ -49,7 +98,7 @@ public class DetailsActivity extends AppCompatActivity {
 //        tabHost.setType(MaterialTabHost.Type.Centered);
 //        tabHost.setType(MaterialTabHost.Type.LeftOffset);
 
-        SectionsPagerAdapter pagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         for (int i = 0; i < pagerAdapter.getCount(); i++) {
             tabHost.addTab(pagerAdapter.getPageTitle(i));
         }
@@ -97,20 +146,18 @@ public class DetailsActivity extends AppCompatActivity {
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
-                    return "Main".toUpperCase(l);
+                    return getResources().getString(R.string.main).toUpperCase(l);
                 case 1:
-                    return "Daily".toUpperCase(l);
+                    return getResources().getString(R.string.daily).toUpperCase(l);
                 case 2:
-                    return "Hourly".toUpperCase(l);
+                    return getResources().getString(R.string.hourly).toUpperCase(l);
                 case 3:
-                    return "Chart".toUpperCase(l);
+                    return getResources().getString(R.string.chart).toUpperCase(l);
 
             }
             return null;
         }
     }
 
-
-
-
 }
+

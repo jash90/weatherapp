@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Geocords">Współrzędne</string>
+    <string name="chart">Wykres</string>
+    <string name="chartWeatherAndForecastIn">Wykres pogodowy w %s</string>
+    <string name="cityIsOnTheList">Miasto jest na liście.</string>
+    <string name="cloud">Zachmurzenie</string>
+    <string name="daily">Dzienna</string>
+    <string name="hourly">Godzinnowa</string>
+    <string name="hourlyWeatherAndForecastsIn">Prognoza godzinowa w %s</string>
+    <string name="humidity">Wilgotność</string>
+    <string name="main">Dzisiaj</string>
+    <string name="precipitation">Opady</string>
+    <string name="pressure">Ciśnienie</string>
+    <string name="rain">Deszcz</string>
+    <string name="removedFromFavorites">%s usunięte z ulubionych</string>
+    <string name="snow">Śnieg</string>
+    <string name="sunrise">Wschód</string>
+    <string name="sunset">Zachód</string>
+    <string name="temperature">Temperatura</string>
+    <string name="wind">Wiatr</string>
+    <string name="weatherAndForecastsIn">Prognoza pogody w %s</string>
+    <string name="chartWeatherAndForecast">Wykres pogodowy</string>
+    <string name="thirteenDayWeatherForecast">13 dniowa prognoza pogody</string>
+    <string name="today">Dzisiaj</string>
+    <string name="degrees">°C</string>
+    <string name="clouds">zachmurzenie</string>
+</resources>

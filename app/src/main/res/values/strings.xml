@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Weather</string>
-    <string name="appid">9f5b1ee98495098542066d82af570a7d</string>
-    <string name="units">metric</string>
+    <string name="app_name" translatable="false">Weather</string>
+    <string name="appid" translatable="false">9f5b1ee98495098542066d82af570a7d</string>
+    <string name="units" translatable="false">metric</string>
     <string name="degrees"> °C</string>
     <string name="wind">Wind</string>
     <string name="pressure">Pressure</string>
@@ -12,7 +12,22 @@
     <string name="Geocords">Geo coords</string>
     <string name="rain">Rain</string>
     <string name="snow">Snow</string>
+    <string name="main">Main</string>
+    <string name="daily">Daily</string>
+    <string name="hourly">Hourly</string>
+    <string name="chart">Chart</string>
+    <string name="cityIsOnTheList">City is on the list.</string>
+    <string name="removedFromFavorites">%s removed from favorites</string>
+    <string name="chartWeatherAndForecastIn">Chart weather and forecasts in %s</string>
+    <string name="temperature">Temperature</string>
+    <string name="precipitation">Precipitation</string>
+    <string name="hourlyWeatherAndForecastsIn">Hourly weather and forecasts in %s</string>
+    <string name="weatherAndForecastsIn">Weather and forecasts in %s</string>
+    <string name="chartWeatherAndForecast">Chart Weather and Forecast</string>
+    <string name="thirteenDayWeatherForecast">13 day weather forecast</string>
+    <string name="today">Today</string>
+    <string name="clouds">clouds</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

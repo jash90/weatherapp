@@ -1,8 +1,13 @@
 package com.example.ideo7.weather.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -55,10 +60,15 @@ import retrofit2.Response;
 public class DailyWeatherFragment extends Fragment {
     @BindView(R.id.chart) CombinedChart chart;
     ArrayList<DailyWeather> dailyWeathers;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedEditor;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_daily_weather, container,false);
         ButterKnife.bind(this,v);
+        setHasOptionsMenu(true);
+        sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        sharedEditor = sharedPreferences.edit();
       //  chart.setOnChartGestureListener(this);
        // chart.setOnChartValueSelectedListener(chart.this);
         chart.setDrawGridBackground(false);
@@ -90,22 +100,23 @@ public class DailyWeatherFragment extends Fragment {
         rightAxis.setDrawZeroLine(false);
         //rightAxis.setDrawLimitLinesBehindData(true);
 
-        Intent intent =getActivity().getIntent();
-        if (intent.getIntExtra("idcity",0)!=0) {
-            getForecastDaily(intent.getIntExtra("idcity", 0));
+        if (sharedPreferences.getString("city",null)!=null) {
+            getForecastDaily(sharedPreferences.getString("city",null));
         }
         else{
             Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
         }
         //chart.animateX(2500);
+        chart.refreshDrawableState();
         Legend l = chart.getLegend();
         l.setForm(Legend.LegendForm.CIRCLE);
+        chart.notifyDataSetChanged();
         chart.invalidate();
         return v;
     }
-    public void getForecastDaily(Integer city){
+    public void getForecastDaily(String city){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastDailyResponse> call = openWeather.getForecastDailyId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units),13, Convert.getlang());
+        Call<ForecastDailyResponse> call = openWeather.getForecastDaily(city,getResources().getString(R.string.appid),getResources().getString(R.string.units),13, Convert.getlang());
         call.enqueue(new Callback<ForecastDailyResponse>() {
             @Override
             public void onResponse(Call<ForecastDailyResponse> call, Response<ForecastDailyResponse> response) {
@@ -143,7 +154,7 @@ public class DailyWeatherFragment extends Fragment {
                         chart.getData().notifyDataChanged();
                         chart.notifyDataSetChanged();
                     } else {
-                        set1 = new LineDataSet(tempvalues, "Temperature");
+                        set1 = new LineDataSet(tempvalues, getString(R.string.temperature));
 
                         set1.setDrawIcons(false);
                         set1.setColor(Color.rgb(0,0,255));
@@ -159,7 +170,7 @@ public class DailyWeatherFragment extends Fragment {
                         xAxis.setValueFormatter(new LabelFormatter(labels));
 
 
-                        BarDataSet set2 = new BarDataSet(rainvalues, "Precipitation");
+                        BarDataSet set2 = new BarDataSet(rainvalues, getString(R.string.precipitation));
                         set2.setColor(Color.rgb(160,160,160));
                         set2.setValueTextColor(Color.rgb(160,160,160));
                         set2.setValueTextSize(10f);
@@ -181,6 +192,7 @@ public class DailyWeatherFragment extends Fragment {
                         chart.setData(combinedData);
                         YAxis rightAxis = chart.getAxisRight();
                         rightAxis.setAxisMaximum(max.floatValue()+20f);
+                        chart.notifyDataSetChanged();
                         chart.invalidate();
                     }
                 }
@@ -193,5 +205,6 @@ public class DailyWeatherFragment extends Fragment {
             }
         });
     }
+
 
 }

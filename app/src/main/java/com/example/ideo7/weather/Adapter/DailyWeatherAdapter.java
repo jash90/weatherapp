@@ -73,7 +73,7 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
                 .into(holder.icon);
         holder.tempDay.setText(String.format("%.2f %s",dailyWeather.getTemp().getMorn(),holder.itemView.getContext().getResources().getString(R.string.degrees)));
         holder.tempNight.setText(String.format("%.2f %s",dailyWeather.getTemp().getNight(),holder.itemView.getContext().getResources().getString(R.string.degrees)));
-        holder.cloud.setText(String.format("clouds: %d %%,  %.2f hpa",dailyWeather.getClouds(),dailyWeather.getPressure()));
+        holder.cloud.setText(String.format("%s: %d %%,  %.2f hpa",holder.itemView.getResources().getString(R.string.clouds),dailyWeather.getClouds(),dailyWeather.getPressure()));
         holder.wind.setText(String.format("%.2f m/s",dailyWeather.getSpeed()));
 
         holder.description.setText(dailyWeather.getWeather().get(0).getDescription());

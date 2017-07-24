@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ideo7.weather.Activity.DetailsActivity;
+import com.example.ideo7.weather.Model.City;
 import com.example.ideo7.weather.Model.ForecastNowWeatherResponse;
 
 import com.example.ideo7.weather.R;
@@ -92,7 +93,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
 //            }
 //        });
         holder.date.setText(new SimpleDateFormat("HH:mm dd.MM.yyyy").format(new Date()));
-        if (!favoriteCitys.contains(forecastNowWeatherResponse.getName())){
+        if (!favoriteCitys.contains(forecastNowWeatherResponse.getName()+","+forecastNowWeatherResponse.getSys().getCountry())){
             holder.checked.setChecked(false);
         }
         else {
@@ -105,12 +106,12 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
                 if(((CheckBox)v).isChecked())
                 {
 
-                    favoriteCitys.add(holder.city.getText().toString());
+                    favoriteCitys.add(forecastNowWeatherResponse.getName()+","+forecastNowWeatherResponse.getSys().getCountry());
                     Toast.makeText(holder.itemView.getContext(),String.format("%s added to favorites.",forecastNowWeatherResponse.getName()),Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-                    favoriteCitys.remove(holder.city.getText().toString());
+                    favoriteCitys.remove(forecastNowWeatherResponse.getName()+","+forecastNowWeatherResponse.getSys().getCountry());
                     Toast.makeText(holder.itemView.getContext(),String.format("%s removed from favorites.",forecastNowWeatherResponse.getName()),Toast.LENGTH_SHORT).show();
                 }
                 Log.d("citys",favoriteCitys.toString());
@@ -118,7 +119,8 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
         });
         Picasso.with(holder.itemView.getContext())
                 .load(String.format("https://openweathermap.org/img/w/%s.png", forecastNowWeatherResponse.getWeather().get(0).getIcon()))
-                .resize(100, 100)
+                .resize(100,100)
+                .centerCrop()
                 .into(holder.icon);
         //holder.icon.setImageURI(Uri.parse();
      //   Log.d("error",String.format("https://openweathermap.org/img/w/%s.png",forecastNowWeatherResponse.getWeather().get(0).getIcon()));

@@ -56,5 +56,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
     compile 'net.danlew:android.joda:2.9.9'
     compile 'com.github.traex.expandablelayout:library:1.2.2'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
     compile 'com.github.CodeFalling:RecyclerViewSwipeDismiss:v1.1.3'
 }

@@ -1,13 +1,19 @@
 package com.example.ideo7.weather.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,14 +46,17 @@ public class ChartFragment extends Fragment {
     @BindView(R.id.viewPager) ViewPager viewPager;
     @BindView(R.id.title) TextView title;
     ArrayList<DailyWeather> dailyWeathers;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedEditor;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chart, container,false);
         ButterKnife.bind(this,v);
         tabHost.setType(MaterialTabHost.Type.FullScreenWidth);
-        Intent intent = getActivity().getIntent();
-        if (intent.getStringExtra("city")!=null) {
-            title.setText(String.format("Chart weather and forecasts in %s, %s",intent.getStringExtra("city"),intent.getStringExtra("country")));
+        sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        sharedEditor = sharedPreferences.edit();
+        if (sharedPreferences.getString("city",null)!=null) {
+            title.setText(String.format(getString(R.string.chartWeatherAndForecastIn),sharedPreferences.getString("city",null)));
         }
 
 
@@ -88,7 +97,7 @@ public class ChartFragment extends Fragment {
                 case 1: return new WindChart();
                 case 2: return new PressureChart();
                 case 3: return new PrecipitationChart();
-                default: return PlaceholderFragment.newInstance(position+1);
+                default: return new Fragment();
             }
         }
 
@@ -103,48 +112,20 @@ public class ChartFragment extends Fragment {
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
-                    return "Temperature".toUpperCase(l);
+                    return getResources().getString(R.string.temperature).toUpperCase(l);
                 case 1:
-                    return "Wind".toUpperCase(l);
+                    return getResources().getString(R.string.wind).toUpperCase(l);
                 case 2:
-                    return "Pressure".toUpperCase(l);
+                    return getResources().getString(R.string.pressure).toUpperCase(l);
                 case 3:
-                    return "Precipitation".toUpperCase(l);
+                    return getResources().getString(R.string.precipitation).toUpperCase(l);
 
             }
             return null;
         }
     }
 
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
 
-        public PlaceholderFragment() {
-        }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_sample, container, false);
-            TextView tv = (TextView) rootView.findViewById(R.id.section_label);
-            tv.setText("Here is page " + getArguments().getInt(ARG_SECTION_NUMBER));
-            return rootView;
-        }
-    }
 }

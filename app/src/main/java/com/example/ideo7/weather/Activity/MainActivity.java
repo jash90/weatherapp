@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
+import com.example.ideo7.weather.Model.City;
 import com.example.ideo7.weather.Model.Convert;
 import com.example.ideo7.weather.Model.ForecastDailyResponse;
 import com.example.ideo7.weather.Model.ForecastNowWeatherResponse;
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                             if (forecastNowWeatherResponses.get(i).getName().equals(text)) {
                                 forecastNowWeatherResponses.remove(i);
                                 if (((CheckBox) view.findViewById(R.id.checked)).isChecked())
-                                Toast.makeText(getApplicationContext(),"Rzeszów removed from favorites",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),R.string.removedFromFavorites, Toast.LENGTH_SHORT).show();
                             }
 //                            Log.d("ondissmis", String.valueOf(forecastNowWeatherResponses.get(i).equals(((TextView)view.findViewById(R.id.city)).getText().toString())));
                         }
@@ -130,6 +131,11 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra("city", forecastNowWeatherResponses.get(position).getName());
                         intent.putExtra("country", forecastNowWeatherResponses.get(position).getSys().getCountry());
                         intent.putExtra("idcity", forecastNowWeatherResponses.get(position).getId());
+                        Gson gson = new Gson();
+                        String favorites = gson.toJson(favoritescitys);
+                        sharedEditor.putString("city",forecastNowWeatherResponses.get(position).getName()+","+forecastNowWeatherResponses.get(position).getSys().getCountry());
+                        sharedEditor.commit();
+                        intent.putExtra("favorites", favorites);
                         startActivity(intent);
                     }
                 }).create();
@@ -137,20 +143,45 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void searchWeather(final String city) {
+    public void searchWeather(Integer city) {
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
         Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city, getResources().getString(R.string.appid), getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastNowWeatherResponse>() {
             @Override
             public void onResponse(Call<ForecastNowWeatherResponse> call, retrofit2.Response<ForecastNowWeatherResponse> response) {
                 if (response.isSuccessful()) {
-                    if (!citys.contains(response.body().getName())) {
+                    if (!citys.contains(response.body().getName()+","+response.body().getSys().getCountry())) {
                         forecastNowWeatherResponses.add(0, response.body());
                         nowWeatherAdapter.notifyDataSetChanged();
                     } else {
-                        Toast.makeText(getApplicationContext(), "City is on the list.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),R.string.cityIsOnTheList, Toast.LENGTH_SHORT).show();
                     }
-                    citys.add(response.body().getName());
+                    citys.add(response.body().getName() + "," + response.body().getSys().getCountry());
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ForecastNowWeatherResponse> call, Throwable t) {
+                Log.d("error", t.getLocalizedMessage());
+            }
+        });
+    }
+
+    public void searchWeather(String city) {
+        OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
+        Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city, getResources().getString(R.string.appid), getResources().getString(R.string.units), Convert.getlang());
+        call.enqueue(new Callback<ForecastNowWeatherResponse>() {
+            @Override
+            public void onResponse(Call<ForecastNowWeatherResponse> call, retrofit2.Response<ForecastNowWeatherResponse> response) {
+                if (response.isSuccessful()) {
+                    if (!citys.contains(response.body().getName()+","+response.body().getSys().getCountry())) {
+                        forecastNowWeatherResponses.add(0, response.body());
+                        nowWeatherAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.cityIsOnTheList, Toast.LENGTH_SHORT).show();
+                    }
+                    citys.add(response.body().getName() + "," + response.body().getSys().getCountry());
 
                 }
             }

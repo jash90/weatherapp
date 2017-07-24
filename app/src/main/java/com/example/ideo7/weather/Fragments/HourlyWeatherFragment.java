@@ -1,7 +1,12 @@
 package com.example.ideo7.weather.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -21,8 +26,12 @@ import com.example.ideo7.weather.Model.Convert;
 import com.example.ideo7.weather.Model.ForecastHourlyResponse;
 import com.example.ideo7.weather.Model.HourlyWeather;
 import com.example.ideo7.weather.R;
+import com.github.mikephil.charting.components.Legend;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,31 +50,34 @@ public class HourlyWeatherFragment extends Fragment{
     @BindView(R.id.title) TextView title;
     ArrayList<HourlyWeather> hourlyWeathers;
     HourlyWeatherFragmentAdapter hourlyWeatherAdapter;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedEditor;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_hourly_weather, container,false);
         ButterKnife.bind(this,v);
+        setHasOptionsMenu(true);
+        sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        sharedEditor = sharedPreferences.edit();
         hourlyWeathers= new ArrayList<>();
         RecyclerView.LayoutManager hourlyLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(hourlyLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         hourlyWeatherAdapter = new HourlyWeatherFragmentAdapter(hourlyWeathers);
         recyclerView.setAdapter(hourlyWeatherAdapter);
-        Intent intent = getActivity().getIntent();
-        Log.d("log2",intent.getStringExtra("city"));
 
-        if (intent.getIntExtra("idcity",0)!=0){
-            getForecast(intent.getIntExtra("idcity",0));
+        if (sharedPreferences.getString("city",null)!=null) {
+            getForecast(sharedPreferences.getString("city",null));
         }
-        else {
-            Toast.makeText(getContext(), "Bad Id City", Toast.LENGTH_SHORT).show();
+        else{
+            Toast.makeText(getContext(),"Bad id City",Toast.LENGTH_SHORT).show();
         }
         return v;
     }
-    public void getForecast(Integer city){
+    public void getForecast(String city){
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastHourlyResponse> call = openWeather.getForecastAllId(city,getResources().getString(R.string.appid),getResources().getString(R.string.units), Convert.getlang());
+        Call<ForecastHourlyResponse> call = openWeather.getForecastAll(city,getResources().getString(R.string.appid),getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastHourlyResponse>() {
             @Override
             public void onResponse(Call<ForecastHourlyResponse> call, Response<ForecastHourlyResponse> response) {
@@ -74,7 +86,7 @@ public class HourlyWeatherFragment extends Fragment{
                     hourlyWeathers.add(hw);
 
                 hourlyWeatherAdapter.notifyDataSetChanged();
-                title.setText(String.format("Hourly weather and forecasts in %s,%s",response.body().getCity().getName(),response.body().getCity().getCountry()));
+                title.setText(String.format(getString(R.string.hourlyWeatherAndForecastsIn),response.body().getCity().getName()+","+response.body().getCity().getCountry()));
 
             }
 
@@ -84,5 +96,6 @@ public class HourlyWeatherFragment extends Fragment{
             }
         });
     }
+
 }
 
