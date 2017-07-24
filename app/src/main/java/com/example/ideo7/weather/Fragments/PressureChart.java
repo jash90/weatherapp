@@ -60,7 +60,7 @@ public class PressureChart extends Fragment {
         public void onReceive(Context context, Intent intent) {
             sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
             sharedEditor = sharedPreferences.edit();
-
+            chart.clear();
             if (sharedPreferences.getString("city",null)!=null) {
                 getForecast(sharedPreferences.getString("city",null));
             }
@@ -147,6 +147,7 @@ public class PressureChart extends Fragment {
                     labels.add(new LocalDate(hws.get(i).getDt() * 1000l).toString("dd"));
 
                 }
+                Log.d("pressure",data.toString());
                 LineDataSet set1;
                 if (chart.getData() != null &&
                         chart.getData().getDataSetCount() > 0) {

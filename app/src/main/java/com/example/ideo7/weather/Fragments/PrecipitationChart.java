@@ -66,7 +66,7 @@ public class PrecipitationChart extends Fragment {
         public void onReceive(Context context, Intent intent) {
             sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
             sharedEditor = sharedPreferences.edit();
-
+            chart.clear();
             if (sharedPreferences.getString("city",null)!=null) {
                 getForecast(sharedPreferences.getString("city",null));
             }
