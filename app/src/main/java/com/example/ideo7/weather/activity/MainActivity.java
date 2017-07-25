@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!editText.getText().toString().isEmpty()) {
-                    searchWeather(editText.getText().toString(),false);
+                    searchWeather(editText.getText().toString());
                     editText.requestFocus();
                     Convert.hideSoftKeyboard(MainActivity.this);
                 }
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> arrayList = gson.fromJson(listFavoritesCitys, String.class.getGenericSuperclass());
             for (String s : arrayList) {
                 if (!citys.contains(s)) {
-                    searchWeather(s,true);
+                    searchWeather(s);
                 }
             }
             favoritescitys.addAll(arrayList);
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setOnTouchListener(listener);
     }
 
-    public void searchWeather(String city, final Boolean bool) {
+    public void searchWeather(String city) {
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
         Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city, getResources().getString(R.string.appid), getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastNowWeatherResponse>() {
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<ForecastNowWeatherResponse> call, @NonNull retrofit2.Response<ForecastNowWeatherResponse> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        if (!citys.contains(response.body().getName() + "," + response.body().getSys().getCountry()) || bool) {
+                        if (!citys.contains(response.body().getName() + "," + response.body().getSys().getCountry())) {
                             forecastNowWeatherResponses.add(0, response.body());
                             nowWeatherAdapter.notifyDataSetChanged();
                             citys.add(response.body().getName() + "," + response.body().getSys().getCountry());
