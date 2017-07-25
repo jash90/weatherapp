@@ -1,5 +1,6 @@
 package com.example.ideo7.weather.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!editText.getText().toString().isEmpty()) {
-                    searchWeather(editText.getText().toString());
+                    searchWeather(editText.getText().toString(),false);
                     editText.requestFocus();
                     Convert.hideSoftKeyboard(MainActivity.this);
                 }
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> arrayList = gson.fromJson(listFavoritesCitys, String.class.getGenericSuperclass());
             for (String s : arrayList) {
                 if (!citys.contains(s)) {
-                    searchWeather(s);
+                    searchWeather(s,true);
                 }
             }
             favoritescitys.addAll(arrayList);
@@ -103,11 +104,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDismiss(View view) {
                         String text = ((TextView) view.findViewById(R.id.city)).getText().toString();
-                        StringTokenizer stringTokenizer = new StringTokenizer(text, ",");
-                        if (!text.isEmpty()) {
+                        if (!text.isEmpty() && text!=null) {
                             for (int i = 0; i < forecastNowWeatherResponses.size(); i++) {
-                                if (forecastNowWeatherResponses.get(i).getName().equals(stringTokenizer.nextToken())
-                                        && forecastNowWeatherResponses.get(i).getSys().getCountry().equals(stringTokenizer.nextToken())) {
+                                if ((forecastNowWeatherResponses.get(i).getName()+","+forecastNowWeatherResponses.get(i).getSys().getCountry()).contains(text)) {
 
                                     if (((CheckBox) view.findViewById(R.id.checked)).isChecked()) {
                                         Toast.makeText(getApplicationContext(), String.format(getString(R.string.removedFromFavorites), forecastNowWeatherResponses.get(i).getName()), Toast.LENGTH_SHORT).show();
@@ -116,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
                                     forecastNowWeatherResponses.remove(i);
                                 }
                             }
-
                             citys.remove(text);
                             favoritescitys.remove(text);
                             nowWeatherAdapter.notifyDataSetChanged();
@@ -146,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setOnTouchListener(listener);
     }
 
-    public void searchWeather(String city) {
+    public void searchWeather(String city, final Boolean bool) {
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
         Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city, getResources().getString(R.string.appid), getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastNowWeatherResponse>() {
@@ -154,13 +152,14 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<ForecastNowWeatherResponse> call, @NonNull retrofit2.Response<ForecastNowWeatherResponse> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        if (!citys.contains(response.body().getName() + "," + response.body().getSys().getCountry())) {
+                        if (!citys.contains(response.body().getName() + "," + response.body().getSys().getCountry()) || bool) {
                             forecastNowWeatherResponses.add(0, response.body());
                             nowWeatherAdapter.notifyDataSetChanged();
+                            citys.add(response.body().getName() + "," + response.body().getSys().getCountry());
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.cityIsOnTheList, Toast.LENGTH_SHORT).show();
                         }
-                        citys.add(response.body().getName() + "," + response.body().getSys().getCountry());
+
                     }
                 }
             }
@@ -190,15 +189,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Gson gson = new Gson();
-        String listCitys = sharedPreferences.getString("citys", null);
-        if (listCitys != null) {
-            ArrayList<String> arrayList = gson.fromJson(listCitys, String.class.getGenericSuperclass());
-            for (int i = 0; i < arrayList.size(); i++) {
-                searchWeather(arrayList.get(i));
-            }
-            citys.addAll(arrayList);
-        }
+        Convert.hideSoftKeyboard(this);
 
     }
 }
