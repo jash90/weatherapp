@@ -18,10 +18,10 @@
     <string name="chart">Chart</string>
     <string name="cityIsOnTheList">City is on the list.</string>
     <string name="removedFromFavorites">%s removed from favorites.</string>
-    <string name="chartWeatherAndForecastIn">Chart weather and forecasts in %s .</string>
+    <string name="chartWeatherAndForecastIn">Chart weather and forecasts in %s</string>
     <string name="temperature">Temperature</string>
     <string name="precipitation">Precipitation</string>
-    <string name="hourlyWeatherAndForecastsIn">Hourly weather and forecasts in %s .</string>
+    <string name="hourlyWeatherAndForecastsIn">Hourly weather and forecasts in %s</string>
     <string name="weatherAndForecastsIn">Weather and forecasts in %s .</string>
     <string name="chartWeatherAndForecast">Chart Weather and Forecast</string>
     <string name="thirteenDayWeatherForecast">13 day weather forecast</string>

@@ -2,12 +2,12 @@
 <resources>
     <string name="Geocords">Współrzędne</string>
     <string name="chart">Wykres</string>
-    <string name="chartWeatherAndForecastIn">Wykres pogodowy w %s .</string>
+    <string name="chartWeatherAndForecastIn">Wykres pogodowy w %s</string>
     <string name="cityIsOnTheList">Miasto jest na liście.</string>
     <string name="cloud">Zachmurzenie</string>
     <string name="daily">Dzienna</string>
     <string name="hourly">Godzinna</string>
-    <string name="hourlyWeatherAndForecastsIn">Prognoza godzinowa w %s .</string>
+    <string name="hourlyWeatherAndForecastsIn">Prognoza godzinowa w %s</string>
     <string name="humidity">Wilgotność</string>
     <string name="main">Dzisiaj</string>
     <string name="precipitation">Opady</string>
