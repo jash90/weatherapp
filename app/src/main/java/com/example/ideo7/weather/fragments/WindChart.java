@@ -10,11 +10,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 
 import com.example.ideo7.weather.R;
 import com.example.ideo7.weather.api.OpenWeather;
@@ -59,7 +59,7 @@ public class WindChart extends Fragment {
             if (sharedPreferences.getString("city", null) != null) {
                 getForecast(sharedPreferences.getString("city", null));
             } else {
-                Toast.makeText(getContext(), "Bad id City", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getContext().getString(R.string.emptyCity), Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -167,8 +167,10 @@ public class WindChart extends Fragment {
                         LineData lineData = new LineData(dataSets);
 
                         chart.setData(lineData);
+
                         YAxis leftAxis = chart.getAxisLeft();
                         leftAxis.setAxisMaximum(max.floatValue() + 20f);
+
                         chart.getData().notifyDataChanged();
                         chart.notifyDataSetChanged();
                         chart.invalidate();
@@ -179,7 +181,7 @@ public class WindChart extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<ForecastHourlyResponse> call, @NonNull Throwable t) {
-                Log.d("log", t.getLocalizedMessage());
+                Toast.makeText(getContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }

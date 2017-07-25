@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -63,8 +62,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarChangeListener,
-        OnChartGestureListener, OnChartValueSelectedListener {
+public class MainWeatherFragment extends Fragment {
 
 
     @BindView(R.id.chart1)
@@ -94,7 +92,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                 getForecastDaily(sharedPreferences.getString("city", null));
                 getForecastHourly(sharedPreferences.getString("city", null));
             } else {
-                Toast.makeText(getContext(), "Bad id City", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getContext().getString(R.string.emptyCity), Toast.LENGTH_SHORT).show();
             }
             title.setText(String.format(getString(R.string.weatherAndForecastsIn), sharedPreferences.getString("city", null)));
 
@@ -110,8 +108,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
         setHasOptionsMenu(true);
         sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
 
-        chart.setOnChartGestureListener(this);
-        chart.setOnChartValueSelectedListener(this);
+
         chart.setDrawGridBackground(false);
         chart.getDescription().setEnabled(false);
         chart.setTouchEnabled(true);
@@ -131,7 +128,6 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
         dailyWeather.setItemAnimator(new DefaultItemAnimator());
         dailyWeatherAdapter = new DailyWeatherAdapter(dailyWeathers);
         dailyWeather.setAdapter(dailyWeatherAdapter);
-        Log.d("recycler", String.valueOf(hourlyWeather.getWidth()));
 
         chart.setPinchZoom(true);
         MyMarkerView mv = new MyMarkerView(getContext(), R.layout.marker_view);
@@ -177,7 +173,6 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                     for (HourlyWeather hw : list) {
                         hourlyWeathers.add(hw);
                         hourlyWeatherMainFragmentAdapter.notifyDataSetChanged();
-                        Log.d("hw", hw.toString());
                     }
                     hourlyWeatherMainFragmentAdapter.notifyDataSetChanged();
 
@@ -196,7 +191,6 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                         if (list.get(i).getRain() != null) {
                             if (list.get(i).getRain().getLast3h() != null) {
                                 rainvalues.add(new BarEntry(i, list.get(i).getRain().getLast3h().floatValue()));
-                                Log.d("rainValues", list.get(i).getRain().getLast3h().toString());
                                 if (max < list.get(i).getRain().getLast3h()) {
                                     max = list.get(i).getRain().getLast3h();
                                 }
@@ -208,7 +202,6 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
 
                     }
 
-                    Log.d("log", labels.toString());
                     LineDataSet set1;
 
                     if (chart.getData() != null &&
@@ -249,8 +242,6 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                         combinedData.setData(d);
                         combinedData.setData(data);
 
-                        Log.d("d", d.toString());
-
                         chart.setData(combinedData);
 
                         YAxis rightAxis = chart.getAxisRight();
@@ -270,7 +261,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
 
             @Override
             public void onFailure(@NonNull Call<ForecastHourlyResponse> call, @NonNull Throwable t) {
-                Log.d("log", t.getLocalizedMessage());
+                Toast.makeText(getContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -295,7 +286,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
 
             @Override
             public void onFailure(@NonNull Call<ForecastDailyResponse> call, @NonNull Throwable t) {
-                Log.d("log", t.getLocalizedMessage());
+                Toast.makeText(getContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -311,77 +302,5 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
     public void onPause() {
         getActivity().unregisterReceiver(broadcastReceiver);
         super.onPause();
-    }
-
-
-    @Override
-    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-        Log.i("Gesture", "START, x: " + me.getX() + ", y: " + me.getY());
-    }
-
-    @Override
-    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-        Log.i("Gesture", "END, lastGesture: " + lastPerformedGesture);
-
-        // un-highlight values after the gesture is finished and no single-tap
-        if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP)
-            chart.highlightValues(null); // or highlightTouch(null) for callback to onNothingSelected(...)
-    }
-
-    @Override
-    public void onChartLongPressed(MotionEvent me) {
-        Log.i("LongPress", "Chart longpressed.");
-    }
-
-    @Override
-    public void onChartDoubleTapped(MotionEvent me) {
-        Log.i("DoubleTap", "Chart double-tapped.");
-    }
-
-    @Override
-    public void onChartSingleTapped(MotionEvent me) {
-        Log.i("SingleTap", "Chart single-tapped.");
-    }
-
-    @Override
-    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-        Log.i("Fling", "Chart flinged. VeloX: " + velocityX + ", VeloY: " + velocityY);
-    }
-
-    @Override
-    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-        Log.i("Scale / Zoom", "ScaleX: " + scaleX + ", ScaleY: " + scaleY);
-    }
-
-    @Override
-    public void onChartTranslate(MotionEvent me, float dX, float dY) {
-        Log.i("Translate / Move", "dX: " + dX + ", dY: " + dY);
-    }
-
-    @Override
-    public void onValueSelected(Entry e, Highlight h) {
-        Log.i("Entry selected", e.toString());
-        Log.i("LOWHIGH", "low: " + chart.getLowestVisibleX() + ", high: " + chart.getHighestVisibleX());
-        Log.i("MIN MAX", "xmin: " + chart.getXChartMin() + ", xmax: " + chart.getXChartMax() + ", ymin: " + chart.getYChartMin() + ", ymax: " + chart.getYChartMax());
-    }
-
-    @Override
-    public void onNothingSelected() {
-        Log.i("Nothing selected", "Nothing selected.");
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
     }
 }

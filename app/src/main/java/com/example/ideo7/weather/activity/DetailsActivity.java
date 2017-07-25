@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -59,12 +58,11 @@ public class DetailsActivity extends AppCompatActivity {
                 sharedEditor.putString("city", item.toString());
                 sharedEditor.apply();
                 sharedEditor.commit();
+
                 Intent intent = new Intent();
                 intent.setAction("menu");
                 sendBroadcast(intent);
                 toolbar.setTitle(item.toString());
-                //finish();
-                //startActivity(getIntent());
                 return true;
             }
         });
@@ -82,8 +80,6 @@ public class DetailsActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String favorites = intent.getStringExtra("favorites");
         ArrayList<String> lista = gson.fromJson(favorites, String.class.getGenericSuperclass());
-        Log.d("s", lista.toString());
-        Log.d("s", favorites);
         for (String s : lista) {
             menu.add(s);
         }

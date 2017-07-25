@@ -98,7 +98,7 @@ public class TemperatureChart extends Fragment {
         if (sharedPreferences.getString("city", null) != null) {
             getForecast(sharedPreferences.getString("city", null));
         } else {
-            Toast.makeText(getContext(), "Bad id City", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.emptyCity), Toast.LENGTH_SHORT).show();
         }
 
         Legend l = chart.getLegend();
@@ -179,7 +179,7 @@ public class TemperatureChart extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<ForecastHourlyResponse> call, @NonNull Throwable t) {
-                Log.d("log", t.getLocalizedMessage());
+               Toast.makeText(getContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }

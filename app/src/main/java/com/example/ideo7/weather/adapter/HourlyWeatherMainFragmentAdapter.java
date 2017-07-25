@@ -68,7 +68,7 @@ public class HourlyWeatherMainFragmentAdapter extends RecyclerView.Adapter<Hourl
 
         holder.wind.setText(hourlyWeather.getWind() != null ? hourlyWeather.getWind().getSpeed().toString() + " m/s" : "0 m/s");
 
-        holder.temp.setText(String.format("%.2f %s".toUpperCase(), hourlyWeather.getMain().getTemp(), holder.itemView.getContext().getResources().getString(R.string.degrees)));
+        holder.temp.setText(String.format("%.2f %s".toLowerCase(), hourlyWeather.getMain().getTemp(), holder.itemView.getContext().getResources().getString(R.string.degrees)));
 
         holder.pressure.setText(String.format("%.2f hpa".toLowerCase(), hourlyWeather.getMain().getPressure()));
 

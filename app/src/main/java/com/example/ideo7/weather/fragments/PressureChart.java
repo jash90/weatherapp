@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +60,7 @@ public class PressureChart extends Fragment {
             if (sharedPreferences.getString("city", null) != null) {
                 getForecast(sharedPreferences.getString("city", null));
             } else {
-                Toast.makeText(getContext(), "Bad id City", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getContext().getString(R.string.emptyCity), Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -137,7 +136,6 @@ public class PressureChart extends Fragment {
                         labels.add(new LocalDate(hws.get(i).getDt() * 1000L).toString("dd"));
 
                     }
-                    Log.d("pressure", data.toString());
                     LineDataSet set1;
                     if (chart.getData() != null &&
                             chart.getData().getDataSetCount() > 0) {
@@ -153,14 +151,6 @@ public class PressureChart extends Fragment {
                         set1.setCircleColor(Color.rgb(0, 0, 255));
                         set1.setColor(Color.rgb(0, 0, 255));
                         set1.setDrawValues(false);
-//                    set1.setValueTextColor(Color.rgb(0, 0, 255));
-//                    set1.setValueTextSize(10f);
-//                    set1.setValueFormatter(new IValueFormatter() {
-//                        @Override
-//                        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-//                            return String.valueOf(Double.valueOf(value).intValue());
-//                        }
-//                    });
 
 
                         XAxis xAxis = chart.getXAxis();
@@ -169,7 +159,7 @@ public class PressureChart extends Fragment {
 
 
                         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-                        dataSets.add(set1); // add the datasets
+                        dataSets.add(set1);
 
                         LineData lineData = new LineData(dataSets);
 
@@ -187,7 +177,7 @@ public class PressureChart extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<ForecastHourlyResponse> call, @NonNull Throwable t) {
-                Log.d("log", t.getLocalizedMessage());
+                Toast.makeText(getContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }

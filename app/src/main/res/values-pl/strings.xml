@@ -19,7 +19,7 @@
     <string name="sunset">Zachód</string>
     <string name="temperature">Temperatura</string>
     <string name="wind">Wiatr</string>
-    <string name="weatherAndForecastsIn">Prognoza pogody w %s .</string>
+    <string name="weatherAndForecastsIn">Prognoza pogody w %s</string>
     <string name="chartWeatherAndForecast">Wykres pogodowy</string>
     <string name="thirteenDayWeatherForecast">13 dniowa prognoza pogody</string>
     <string name="today">Dzisiaj</string>

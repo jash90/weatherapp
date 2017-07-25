@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -145,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).create();
         recyclerView.setOnTouchListener(listener);
-
     }
 
     public void searchWeather(String city) {
@@ -163,14 +161,13 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), R.string.cityIsOnTheList, Toast.LENGTH_SHORT).show();
                         }
                         citys.add(response.body().getName() + "," + response.body().getSys().getCountry());
-
                     }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ForecastNowWeatherResponse> call, @NonNull Throwable t) {
-                Log.d("error", t.getLocalizedMessage());
+                Toast.makeText(getApplicationContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -178,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
         sharedEditor.putString("json", new Gson().toJson(favoritescitys));
         sharedEditor.putString("citys", new Gson().toJson(citys));
         sharedEditor.commit();
@@ -187,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         sharedEditor.putString("citys", null);
         sharedEditor.commit();
     }
@@ -195,7 +190,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         Gson gson = new Gson();
         String listCitys = sharedPreferences.getString("citys", null);
         if (listCitys != null) {

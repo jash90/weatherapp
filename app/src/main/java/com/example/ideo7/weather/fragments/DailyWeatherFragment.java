@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,24 +94,18 @@ public class DailyWeatherFragment extends Fragment {
         leftAxis.removeAllLimitLines();
         leftAxis.setAxisMaximum(50f);
         leftAxis.setAxisMinimum(-50f);
-        // leftAxis.enableGridDashedLine(10f, 10f, 0f);
         leftAxis.setDrawZeroLine(false);
-        //leftAxis.setDrawLimitLinesBehindData(true);
 
         YAxis rightAxis = chart.getAxisRight();
         rightAxis.removeAllLimitLines();
-        //rightAxis.setAxisMaximum(100f);
         rightAxis.setAxisMinimum(0f);
-        //  rightAxis.enableGridDashedLine(10f, 10f, 0f);
         rightAxis.setDrawZeroLine(false);
-        //rightAxis.setDrawLimitLinesBehindData(true);
 
         if (sharedPreferences.getString("city", null) != null) {
             getForecastDaily(sharedPreferences.getString("city", null));
         } else {
-            Toast.makeText(getContext(), "Bad id City", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.emptyCity), Toast.LENGTH_SHORT).show();
         }
-        //chart.animateX(2500);
         Legend l = chart.getLegend();
         l.setForm(Legend.LegendForm.CIRCLE);
         return v;
@@ -200,7 +193,7 @@ public class DailyWeatherFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<ForecastDailyResponse> call, @NonNull Throwable t) {
-                Log.d("log", t.getLocalizedMessage());
+                Toast.makeText(getContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }

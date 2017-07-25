@@ -1,7 +1,5 @@
 package com.example.ideo7.weather.adapter;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +29,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
     private final ArrayList<String> favoriteCitys;
 
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.icon)
         ImageView icon;
         @BindView(R.id.city)
@@ -76,7 +74,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
 
         holder.city.setText(forecastNowWeatherResponse.getName() + "," + forecastNowWeatherResponse.getSys().getCountry());
 
-        holder.temp.setText(String.format("%.2f %s".toLowerCase(), Math.round(forecastNowWeatherResponse.getMain().getTemp()) + holder.itemView.getContext().getResources().getString(R.string.degrees)));
+        holder.temp.setText(String.format("%d %s".toLowerCase(), Math.round(forecastNowWeatherResponse.getMain().getTemp()), holder.itemView.getContext().getResources().getString(R.string.degrees)));
 
         holder.date.setText(new SimpleDateFormat("HH:mm dd.MM.yyyy", Locale.getDefault()).format(new Date()));
 
