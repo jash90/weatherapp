@@ -1,8 +1,6 @@
 package com.example.ideo7.weather.Adapter;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +10,6 @@ import android.widget.TextView;
 import com.example.ideo7.weather.Model.HourlyWeather;
 import com.example.ideo7.weather.R;
 import com.squareup.picasso.Picasso;
-
-import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,7 +23,7 @@ import butterknife.ButterKnife;
  * Created by ideo7 on 19.07.2017.
  */
 
-public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdapter.MyViewHolder>{
+public class HourlyWeatherMainFragmentAdapter extends RecyclerView.Adapter<HourlyWeatherMainFragmentAdapter.MyViewHolder>{
 
     ArrayList<HourlyWeather> list;
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -46,9 +42,9 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.hours_weather_row, parent, false);
         ButterKnife.bind(this, itemView);
-        return new HourlyWeatherAdapter.MyViewHolder(itemView);
+        return new HourlyWeatherMainFragmentAdapter.MyViewHolder(itemView);
     }
-    public HourlyWeatherAdapter(ArrayList<HourlyWeather> list){
+    public HourlyWeatherMainFragmentAdapter(ArrayList<HourlyWeather> list){
         this.list=list;
     }
 

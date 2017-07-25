@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -21,21 +20,13 @@ import android.widget.Toast;
 
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
-import com.example.ideo7.weather.Adapter.DailyWeatherAdapter;
-import com.example.ideo7.weather.Adapter.HourlyWeatherAdapter;
-import com.example.ideo7.weather.Adapter.HourlyWeatherFragmentAdapter;
-import com.example.ideo7.weather.ChartElement.MyMarkerView;
+import com.example.ideo7.weather.Adapter.HourlyWeatherHourlyFragmentAdapter;
 import com.example.ideo7.weather.Model.Convert;
 import com.example.ideo7.weather.Model.ForecastHourlyResponse;
 import com.example.ideo7.weather.Model.HourlyWeather;
 import com.example.ideo7.weather.R;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.YAxis;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +44,7 @@ public class HourlyWeatherFragment extends Fragment{
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
     @BindView(R.id.title) TextView title;
     ArrayList<HourlyWeather> hourlyWeathers;
-    HourlyWeatherFragmentAdapter hourlyWeatherAdapter;
+    HourlyWeatherHourlyFragmentAdapter hourlyWeatherAdapter;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
     private IntentFilter intentFilter = new IntentFilter("menu");
@@ -66,7 +57,7 @@ public class HourlyWeatherFragment extends Fragment{
             RecyclerView.LayoutManager hourlyLayoutManager = new LinearLayoutManager(getContext());
             recyclerView.setLayoutManager(hourlyLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
-            hourlyWeatherAdapter = new HourlyWeatherFragmentAdapter(hourlyWeathers);
+            hourlyWeatherAdapter = new HourlyWeatherHourlyFragmentAdapter(hourlyWeathers);
             recyclerView.setAdapter(hourlyWeatherAdapter);
 
             if (sharedPreferences.getString("city",null)!=null) {
@@ -90,7 +81,7 @@ public class HourlyWeatherFragment extends Fragment{
         RecyclerView.LayoutManager hourlyLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(hourlyLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        hourlyWeatherAdapter = new HourlyWeatherFragmentAdapter(hourlyWeathers);
+        hourlyWeatherAdapter = new HourlyWeatherHourlyFragmentAdapter(hourlyWeathers);
         recyclerView.setAdapter(hourlyWeatherAdapter);
 
         if (sharedPreferences.getString("city",null)!=null) {

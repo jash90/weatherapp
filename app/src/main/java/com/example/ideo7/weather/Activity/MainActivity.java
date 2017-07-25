@@ -30,6 +30,7 @@ import com.example.ideo7.weather.Adapter.NowWeatherAdapter;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -101,16 +102,22 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDismiss(View view) {
                         String text = ((TextView) view.findViewById(R.id.city)).getText().toString();
+                        StringTokenizer stringTokenizer = new StringTokenizer(text, ",");
                         for (int i = 0; i < forecastNowWeatherResponses.size(); i++) {
-                            if (forecastNowWeatherResponses.get(i).getName().equals(text)) {
-                                forecastNowWeatherResponses.remove(i);
+                            if (forecastNowWeatherResponses.get(i).getName().equals(stringTokenizer.nextToken())
+                                    && forecastNowWeatherResponses.get(i).getSys().getCountry().equals(stringTokenizer.nextToken())) {
                                 if (((CheckBox) view.findViewById(R.id.checked)).isChecked())
-                                    Toast.makeText(getApplicationContext(),R.string.removedFromFavorites, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),String.format(getString(R.string.removedFromFavorites),
+                                            forecastNowWeatherResponses.get(i).getName()), Toast.LENGTH_SHORT).show();
+                                text =forecastNowWeatherResponses.get(i).getName()+","+forecastNowWeatherResponses.get(i).getSys().getCountry();
+                                forecastNowWeatherResponses.remove(i);
                             }
 //                            Log.d("ondissmis", String.valueOf(forecastNowWeatherResponses.get(i).equals(((TextView)view.findViewById(R.id.city)).getText().toString())));
                         }
+                        Log.d("city",citys.toString());
                         citys.remove(text);
                         favoritescitys.remove(text);
+                        Log.d("city",favoritescitys.toString());
                         nowWeatherAdapter.notifyDataSetChanged();
                         Log.d("ondissmis", forecastNowWeatherResponses.toString());
                         Log.d("ondissmis", ((TextView) view.findViewById(R.id.city)).getText().toString());
@@ -128,16 +135,18 @@ public class MainActivity extends AppCompatActivity {
                 .setItemClickCallback(new SwipeDismissRecyclerViewTouchListener.OnItemClickCallBack() {
                     @Override
                     public void onClick(int position) {
-                        Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
-                        intent.putExtra("city", forecastNowWeatherResponses.get(position).getName());
-                        intent.putExtra("country", forecastNowWeatherResponses.get(position).getSys().getCountry());
-                        intent.putExtra("idcity", forecastNowWeatherResponses.get(position).getId());
-                        Gson gson = new Gson();
-                        String favorites = gson.toJson(favoritescitys);
-                        sharedEditor.putString("city",forecastNowWeatherResponses.get(position).getName()+","+forecastNowWeatherResponses.get(position).getSys().getCountry());
-                        sharedEditor.commit();
-                        intent.putExtra("favorites", favorites);
-                        startActivity(intent);
+                        if (position>-1) {
+                            Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
+                            intent.putExtra("city", forecastNowWeatherResponses.get(position).getName());
+                            intent.putExtra("country", forecastNowWeatherResponses.get(position).getSys().getCountry());
+                            intent.putExtra("idcity", forecastNowWeatherResponses.get(position).getId());
+                            Gson gson = new Gson();
+                            String favorites = gson.toJson(favoritescitys);
+                            sharedEditor.putString("city", forecastNowWeatherResponses.get(position).getName() + "," + forecastNowWeatherResponses.get(position).getSys().getCountry());
+                            sharedEditor.commit();
+                            intent.putExtra("favorites", favorites);
+                            startActivity(intent);
+                        }
                     }
                 }).create();
         recyclerView.setOnTouchListener(listener);

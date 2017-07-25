@@ -7,37 +7,22 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.ideo7.weather.Activity.DetailsActivity;
-import com.example.ideo7.weather.Adapter.HourlyWeatherFragmentAdapter;
-import com.example.ideo7.weather.ChartElement.MyMarkerView;
 import com.example.ideo7.weather.Model.DailyWeather;
 import com.example.ideo7.weather.R;
-import com.github.mikephil.charting.charts.CombinedChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.YAxis;
 
 import net.yanzm.mth.MaterialTabHost;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
 
 import butterknife.BindView;

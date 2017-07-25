@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -25,7 +24,7 @@ import android.widget.Toast;
 import com.example.ideo7.weather.API.OpenWeather;
 import com.example.ideo7.weather.API.ServiceGenerator;
 import com.example.ideo7.weather.Adapter.DailyWeatherAdapter;
-import com.example.ideo7.weather.Adapter.HourlyWeatherAdapter;
+import com.example.ideo7.weather.Adapter.HourlyWeatherMainFragmentAdapter;
 import com.example.ideo7.weather.ChartElement.LabelFormatter;
 import com.example.ideo7.weather.ChartElement.MyMarkerView;
 import com.example.ideo7.weather.Model.Convert;
@@ -72,7 +71,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
     @BindView(R.id.title) TextView title;
     ArrayList<HourlyWeather> hourlyWeathers;
     ArrayList<DailyWeather> dailyWeathers;
-    HourlyWeatherAdapter hourlyWeatherAdapter;
+    HourlyWeatherMainFragmentAdapter hourlyWeatherMainFragmentAdapter;
     DailyWeatherAdapter dailyWeatherAdapter;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
@@ -86,7 +85,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
             dailyWeathers.clear();
             hourlyWeathers.clear();
             dailyWeatherAdapter.notifyDataSetChanged();
-            hourlyWeatherAdapter.notifyDataSetChanged();
+            hourlyWeatherMainFragmentAdapter.notifyDataSetChanged();
             if (sharedPreferences.getString("city",null)!=null) {
                 getForecastDaily(sharedPreferences.getString("city",null));
                 getForecastHourly(sharedPreferences.getString("city",null));
@@ -119,8 +118,8 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
         RecyclerView.LayoutManager hourlyLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         hourlyWeather.setLayoutManager(hourlyLayoutManager);
         hourlyWeather.setItemAnimator(new DefaultItemAnimator());
-        hourlyWeatherAdapter = new HourlyWeatherAdapter(hourlyWeathers);
-        hourlyWeather.setAdapter(hourlyWeatherAdapter);
+        hourlyWeatherMainFragmentAdapter = new HourlyWeatherMainFragmentAdapter(hourlyWeathers);
+        hourlyWeather.setAdapter(hourlyWeatherMainFragmentAdapter);
 
         RecyclerView.LayoutManager dailyLayoutManager = new LinearLayoutManager(getContext());
         dailyWeather.setLayoutManager(dailyLayoutManager);
@@ -175,10 +174,10 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                 ArrayList<HourlyWeather> list = (ArrayList<HourlyWeather>) response.body().getList();
                 for (HourlyWeather hw :list) {
                     hourlyWeathers.add(hw);
-                    hourlyWeatherAdapter.notifyDataSetChanged();
+                    hourlyWeatherMainFragmentAdapter.notifyDataSetChanged();
                     Log.d("hw", hw.toString());
                 }
-                hourlyWeatherAdapter.notifyDataSetChanged();
+                hourlyWeatherMainFragmentAdapter.notifyDataSetChanged();
                 ArrayList<Entry> tempvalues = new ArrayList<Entry>();
                 ArrayList<BarEntry> rainvalues = new ArrayList<>();
                 final ArrayList<String> labels = new ArrayList<String>();
@@ -257,7 +256,7 @@ public class MainWeatherFragment extends Fragment implements SeekBar.OnSeekBarCh
                 chart.getBarData().notifyDataChanged();
                 chart.notifyDataSetChanged();
                 chart.invalidate();
-                hourlyWeatherAdapter.notifyDataSetChanged();
+                hourlyWeatherMainFragmentAdapter.notifyDataSetChanged();
                 hourlyWeather.refreshDrawableState();
             }
 

@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
  * Created by ideo7 on 20.07.2017.
  */
 
-public class HourlyWeatherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class HourlyWeatherHourlyFragmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     ArrayList<HourlyWeather> hourlyWeathers;
     public class TitleHolder extends RecyclerView.ViewHolder {
@@ -51,7 +51,7 @@ public class HourlyWeatherFragmentAdapter extends RecyclerView.Adapter<RecyclerV
         }
     }
 
-    public HourlyWeatherFragmentAdapter(ArrayList<HourlyWeather> list)
+    public HourlyWeatherHourlyFragmentAdapter(ArrayList<HourlyWeather> list)
     {
         this.hourlyWeathers=list;
     }

@@ -75,7 +75,7 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final ForecastNowWeatherResponse forecastNowWeatherResponse = list.get(position);
-        holder.city.setText(forecastNowWeatherResponse.getName());
+        holder.city.setText(forecastNowWeatherResponse.getName()+","+forecastNowWeatherResponse.getSys().getCountry());
         holder.temp.setText(Math.round(forecastNowWeatherResponse.getMain().getTemp())+holder.itemView.getContext().getResources().getString(R.string.degrees));
         holder.date.setText(new SimpleDateFormat("HH:mm dd.MM.yyyy").format(new Date()));
         if (!favoriteCitys.contains(forecastNowWeatherResponse.getName()+","+forecastNowWeatherResponse.getSys().getCountry())){
