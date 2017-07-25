@@ -92,12 +92,12 @@ public class NowWeatherAdapter extends RecyclerView.Adapter<NowWeatherAdapter.My
                 {
 
                     favoriteCitys.add(forecastNowWeatherResponse.getName()+","+forecastNowWeatherResponse.getSys().getCountry());
-                    Toast.makeText(holder.itemView.getContext(),String.format("%s added to favorites.",forecastNowWeatherResponse.getName()),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(holder.itemView.getContext(),String.format(holder.itemView.getResources().getString(R.string.addedToTheFavorites),forecastNowWeatherResponse.getName()),Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
                     favoriteCitys.remove(forecastNowWeatherResponse.getName()+","+forecastNowWeatherResponse.getSys().getCountry());
-                    Toast.makeText(holder.itemView.getContext(),String.format("%s removed from favorites.",forecastNowWeatherResponse.getName()),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(holder.itemView.getContext(),String.format(holder.itemView.getResources().getString(R.string.removedFromFavorites),forecastNowWeatherResponse.getName()),Toast.LENGTH_SHORT).show();
                 }
             }
         });

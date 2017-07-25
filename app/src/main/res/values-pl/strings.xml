@@ -26,4 +26,5 @@
     <string name="degrees">°C</string>
     <string name="clouds">zachmurzenie</string>
     <string name="search">Szukaj</string>
+    <string name="addedToTheFavorites">%s dodane do ulubionych.</string>
 </resources>

@@ -18,6 +18,7 @@
     <string name="chart">Chart</string>
     <string name="cityIsOnTheList">City is on the list.</string>
     <string name="removedFromFavorites">%s removed from favorites.</string>
+    <string name="addedToTheFavorites">%s added to the favorites.</string>
     <string name="chartWeatherAndForecastIn">Chart weather and forecasts in %s</string>
     <string name="temperature">Temperature</string>
     <string name="precipitation">Precipitation</string>

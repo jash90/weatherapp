@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
         String listFavoritesCitys = sharedPreferences.getString("json", null);
         if (listFavoritesCitys != null) {
             ArrayList<String> arrayList = gson.fromJson(listFavoritesCitys, String.class.getGenericSuperclass());
-            for(String s : arrayList){
-                if (!citys.contains(s)){
+            for (String s : arrayList) {
+                if (!citys.contains(s)) {
                     searchWeather(s);
                 }
             }
@@ -103,25 +103,26 @@ public class MainActivity extends AppCompatActivity {
                     public void onDismiss(View view) {
                         String text = ((TextView) view.findViewById(R.id.city)).getText().toString();
                         StringTokenizer stringTokenizer = new StringTokenizer(text, ",");
-                        for (int i = 0; i < forecastNowWeatherResponses.size(); i++) {
-                            if (forecastNowWeatherResponses.get(i).getName().equals(stringTokenizer.nextToken())
-                                    && forecastNowWeatherResponses.get(i).getSys().getCountry().equals(stringTokenizer.nextToken())) {
-                                if (((CheckBox) view.findViewById(R.id.checked)).isChecked())
-                                    Toast.makeText(getApplicationContext(),String.format(getString(R.string.removedFromFavorites),
-                                            forecastNowWeatherResponses.get(i).getName()), Toast.LENGTH_SHORT).show();
-                                text =forecastNowWeatherResponses.get(i).getName()+","+forecastNowWeatherResponses.get(i).getSys().getCountry();
-                                forecastNowWeatherResponses.remove(i);
-                            }
+                        if (text != null) {
+                            for (int i = 0; i < forecastNowWeatherResponses.size(); i++) {
+                                if (forecastNowWeatherResponses.get(i).getName().equals(stringTokenizer.nextToken())
+                                        && forecastNowWeatherResponses.get(i).getSys().getCountry().equals(stringTokenizer.nextToken())) {
+                                    if (((CheckBox) view.findViewById(R.id.checked)).isChecked())
+                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.removedFromFavorites),
+                                                forecastNowWeatherResponses.get(i).getName()), Toast.LENGTH_SHORT).show();
+                                    text = forecastNowWeatherResponses.get(i).getName() + "," + forecastNowWeatherResponses.get(i).getSys().getCountry();
+                                    forecastNowWeatherResponses.remove(i);
+                                }
 //                            Log.d("ondissmis", String.valueOf(forecastNowWeatherResponses.get(i).equals(((TextView)view.findViewById(R.id.city)).getText().toString())));
+                            }
+                            Log.d("city", citys.toString());
+                            citys.remove(text);
+                            favoritescitys.remove(text);
+                            Log.d("city", favoritescitys.toString());
+                            nowWeatherAdapter.notifyDataSetChanged();
+                            Log.d("ondissmis", forecastNowWeatherResponses.toString());
+                            Log.d("ondissmis", ((TextView) view.findViewById(R.id.city)).getText().toString());
                         }
-                        Log.d("city",citys.toString());
-                        citys.remove(text);
-                        favoritescitys.remove(text);
-                        Log.d("city",favoritescitys.toString());
-                        nowWeatherAdapter.notifyDataSetChanged();
-                        Log.d("ondissmis", forecastNowWeatherResponses.toString());
-                        Log.d("ondissmis", ((TextView) view.findViewById(R.id.city)).getText().toString());
-
                     }
                 })
                 .setIsVertical(false)
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 .setItemClickCallback(new SwipeDismissRecyclerViewTouchListener.OnItemClickCallBack() {
                     @Override
                     public void onClick(int position) {
-                        if (position>-1) {
+                        if (position > -1) {
                             Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
                             intent.putExtra("city", forecastNowWeatherResponses.get(position).getName());
                             intent.putExtra("country", forecastNowWeatherResponses.get(position).getSys().getCountry());
@@ -160,11 +161,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ForecastNowWeatherResponse> call, retrofit2.Response<ForecastNowWeatherResponse> response) {
                 if (response.isSuccessful()) {
-                    if (!citys.contains(response.body().getName()+","+response.body().getSys().getCountry())) {
+                    if (!citys.contains(response.body().getName() + "," + response.body().getSys().getCountry())) {
                         forecastNowWeatherResponses.add(0, response.body());
                         nowWeatherAdapter.notifyDataSetChanged();
                     } else {
-                        Toast.makeText(getApplicationContext(),R.string.cityIsOnTheList, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.cityIsOnTheList, Toast.LENGTH_SHORT).show();
                     }
                     citys.add(response.body().getName() + "," + response.body().getSys().getCountry());
 
@@ -185,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ForecastNowWeatherResponse> call, retrofit2.Response<ForecastNowWeatherResponse> response) {
                 if (response.isSuccessful()) {
-                    if (!citys.contains(response.body().getName()+","+response.body().getSys().getCountry())) {
+                    if (!citys.contains(response.body().getName() + "," + response.body().getSys().getCountry())) {
                         forecastNowWeatherResponses.add(0, response.body());
                         nowWeatherAdapter.notifyDataSetChanged();
                     } else {
@@ -207,15 +208,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         sharedEditor.putString("json", new Gson().toJson(favoritescitys));
-        sharedEditor.putString("citys",new Gson().toJson(citys));
-        Log.d("dd","ondestroy");
+        sharedEditor.putString("citys", new Gson().toJson(citys));
+        Log.d("dd", "ondestroy");
         sharedEditor.commit();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sharedEditor.putString("citys",null);
+        sharedEditor.putString("citys", null);
         sharedEditor.commit();
     }
 
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Gson gson = new Gson();
-        String listCitys = sharedPreferences.getString("citys",null);
+        String listCitys = sharedPreferences.getString("citys", null);
         if (listCitys != null) {
             ArrayList<String> arrayList = gson.fromJson(listCitys, String.class.getGenericSuperclass());
             for (int i = 0; i < arrayList.size(); i++) {
