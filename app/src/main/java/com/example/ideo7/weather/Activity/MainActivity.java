@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        sharedEditor = sharedPreferences.edit();
         forecastNowWeatherResponses = new ArrayList<>();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,19 +73,17 @@ public class MainActivity extends AppCompatActivity {
         });
         citys = new ArrayList<>();
         favoritescitys = new ArrayList<>();
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        sharedEditor = sharedPreferences.edit();
         Gson gson = new Gson();
-        String json = sharedPreferences.getString("json", null);
-        if (json != null) {
-            ArrayList<String> arrayList = gson.fromJson(json, String.class.getGenericSuperclass());
-            for (int i = 0; i < arrayList.size(); i++) {
-                searchWeather(arrayList.get(i));
+        String listFavoritesCitys = sharedPreferences.getString("json", null);
+        if (listFavoritesCitys != null) {
+            ArrayList<String> arrayList = gson.fromJson(listFavoritesCitys, String.class.getGenericSuperclass());
+            for(String s : arrayList){
+                if (!citys.contains(s)){
+                    searchWeather(s);
+                }
             }
-            //citys.addAll(arrayList);
             favoritescitys.addAll(arrayList);
         }
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -198,16 +198,29 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         sharedEditor.putString("json", new Gson().toJson(favoritescitys));
+        sharedEditor.putString("citys",new Gson().toJson(citys));
+        Log.d("dd","ondestroy");
+        sharedEditor.commit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sharedEditor.putString("citys",null);
         sharedEditor.commit();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation==Configuration.ORIENTATION_LANDSCAPE){
-
-        }else if (newConfig.orientation==Configuration.ORIENTATION_PORTRAIT){
-
+        Gson gson = new Gson();
+        String listCitys = sharedPreferences.getString("citys",null);
+        if (listCitys != null) {
+            ArrayList<String> arrayList = gson.fromJson(listCitys, String.class.getGenericSuperclass());
+            for (int i = 0; i < arrayList.size(); i++) {
+                searchWeather(arrayList.get(i));
+            }
+            citys.addAll(arrayList);
         }
     }
 }
