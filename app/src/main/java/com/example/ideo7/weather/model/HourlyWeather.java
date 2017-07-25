@@ -2,9 +2,6 @@ package com.example.ideo7.weather.model;
 
 import java.util.List;
 
-/**
- * Created by ideo7 on 18.07.2017.
- */
 
 public class HourlyWeather {
     private Integer dt;

@@ -2,10 +2,6 @@ package com.example.ideo7.weather.model;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by ideo7 on 14.07.2017.
- */
-
 public class Rain {
     @SerializedName("3h")
     private Double last3h;

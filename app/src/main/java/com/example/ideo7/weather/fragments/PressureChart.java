@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -50,14 +51,13 @@ public class PressureChart extends Fragment {
     @BindView(R.id.chart)
     LineChart chart;
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor sharedEditor;
     private IntentFilter intentFilter = new IntentFilter("menu");
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
-            sharedEditor = sharedPreferences.edit();
             chart.clear();
+
             if (sharedPreferences.getString("city", null) != null) {
                 getForecast(sharedPreferences.getString("city", null));
             } else {
@@ -74,9 +74,6 @@ public class PressureChart extends Fragment {
         ButterKnife.bind(this, v);
         setHasOptionsMenu(true);
         sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
-        sharedEditor = sharedPreferences.edit();
-        //chart.setOnChartGestureListener(this);
-        //chart.setOnChartValueSelectedListener(this);
         chart.setDrawGridBackground(false);
         chart.getDescription().setEnabled(false);
         chart.setTouchEnabled(true);
@@ -94,24 +91,20 @@ public class PressureChart extends Fragment {
         leftAxis.setAxisMinimum(-50f);
         leftAxis.setMinWidth(30);
         leftAxis.setDrawZeroLine(false);
-        //leftAxis.setDrawLimitLinesBehindData(true);
-
 
         YAxis rightAxis = chart.getAxisRight();
         rightAxis.setEnabled(false);
-        //rightAxis.setDrawLimitLinesBehindData(true);
 
         if (sharedPreferences.getString("city", null) != null) {
             getForecast(sharedPreferences.getString("city", null));
         } else {
-            Toast.makeText(getContext(), "Bad id City", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getResources().getString(R.string.emptyCity), Toast.LENGTH_SHORT).show();
         }
-        //chart.animateX(2500);
+
         Legend l = chart.getLegend();
         l.setForm(Legend.LegendForm.CIRCLE);
-        chart.invalidate();
-        //Log.d("log","precipitationchart");
 
+        chart.invalidate();
 
         return v;
     }
@@ -121,44 +114,45 @@ public class PressureChart extends Fragment {
         Call<ForecastHourlyResponse> call = openWeather.getForecastAll(city, getResources().getString(R.string.appid), getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastHourlyResponse>() {
             @Override
-            public void onResponse(Call<ForecastHourlyResponse> call, Response<ForecastHourlyResponse> response) {
-                ArrayList<HourlyWeather> hws = (ArrayList<HourlyWeather>) response.body().getList();
-                ArrayList<Entry> data = new ArrayList<Entry>();
-                ArrayList<String> labels = new ArrayList<String>();
-                Double max = 0.0;
-                if (hws.get(0).getMain().getPressure() != null) {
-                    max = hws.get(0).getMain().getPressure();
-                }
-                Double min = 0.0;
-                if (hws.get(0).getMain().getPressure() != null) {
-                    min = hws.get(0).getMain().getPressure();
-                }
-                for (int i = 0; i < hws.size(); i++) {
-                    if (hws.get(i).getMain().getPressure() != null) {
-                        data.add(new Entry(i, hws.get(i).getMain().getPressure().intValue()));
-                    } else {
-                        data.add(new Entry(i, 0));
+            public void onResponse(@NonNull Call<ForecastHourlyResponse> call, @NonNull Response<ForecastHourlyResponse> response) {
+                if (response.body().getList() != null) {
+                    ArrayList<HourlyWeather> hws = (ArrayList<HourlyWeather>) response.body().getList();
+                    ArrayList<Entry> data = new ArrayList<>();
+                    ArrayList<String> labels = new ArrayList<>();
+                    Double max = 0.0;
+                    if (hws.get(0).getMain().getPressure() != null) {
+                        max = hws.get(0).getMain().getPressure();
                     }
+                    Double min = 0.0;
+                    if (hws.get(0).getMain().getPressure() != null) {
+                        min = hws.get(0).getMain().getPressure();
+                    }
+                    for (int i = 0; i < hws.size(); i++) {
+                        if (hws.get(i).getMain().getPressure() != null) {
+                            data.add(new Entry(i, hws.get(i).getMain().getPressure().intValue()));
+                        } else {
+                            data.add(new Entry(i, 0));
+                        }
 
-                    labels.add(new LocalDate(hws.get(i).getDt() * 1000l).toString("dd"));
+                        labels.add(new LocalDate(hws.get(i).getDt() * 1000L).toString("dd"));
 
-                }
-                Log.d("pressure", data.toString());
-                LineDataSet set1;
-                if (chart.getData() != null &&
-                        chart.getData().getDataSetCount() > 0) {
-                    set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
-                    set1.setValues(data);
-                    chart.getData().notifyDataChanged();
-                    chart.notifyDataSetChanged();
-                } else {
-                    set1 = new LineDataSet(data, getString(R.string.pressure));
+                    }
+                    Log.d("pressure", data.toString());
+                    LineDataSet set1;
+                    if (chart.getData() != null &&
+                            chart.getData().getDataSetCount() > 0) {
+                        set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
+                        set1.setValues(data);
+                        chart.getData().notifyDataChanged();
+                        chart.notifyDataSetChanged();
+                    } else {
+                        set1 = new LineDataSet(data, getString(R.string.pressure));
 
-                    set1.setDrawIcons(false);
-                    set1.setColor(Color.rgb(0, 0, 255));
-                    set1.setCircleColor(Color.rgb(0, 0, 255));
-                    set1.setColor(Color.rgb(0, 0, 255));
-                    set1.setDrawValues(false);
+                        set1.setDrawIcons(false);
+                        set1.setColor(Color.rgb(0, 0, 255));
+                        set1.setCircleColor(Color.rgb(0, 0, 255));
+                        set1.setColor(Color.rgb(0, 0, 255));
+                        set1.setDrawValues(false);
 //                    set1.setValueTextColor(Color.rgb(0, 0, 255));
 //                    set1.setValueTextSize(10f);
 //                    set1.setValueFormatter(new IValueFormatter() {
@@ -169,30 +163,30 @@ public class PressureChart extends Fragment {
 //                    });
 
 
-                    XAxis xAxis = chart.getXAxis();
-                    xAxis.setGranularity(1f);
-                    xAxis.setValueFormatter(new LabelFormatter(labels));
+                        XAxis xAxis = chart.getXAxis();
+                        xAxis.setGranularity(1f);
+                        xAxis.setValueFormatter(new LabelFormatter(labels));
 
 
-                    ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-                    dataSets.add(set1); // add the datasets
+                        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+                        dataSets.add(set1); // add the datasets
 
-                    LineData lineData = new LineData(dataSets);
+                        LineData lineData = new LineData(dataSets);
 
-                    chart.setData(lineData);
-                    YAxis leftAxis = chart.getAxisLeft();
-                    leftAxis.setAxisMinimum(min.floatValue() - 20f);
-                    leftAxis.setAxisMaximum(max.floatValue() + 20f);
-                    chart.getData().notifyDataChanged();
-                    chart.notifyDataSetChanged();
-                    chart.invalidate();
+                        chart.setData(lineData);
+                        YAxis leftAxis = chart.getAxisLeft();
+                        leftAxis.setAxisMinimum(min.floatValue() - 20f);
+                        leftAxis.setAxisMaximum(max.floatValue() + 20f);
+                        chart.getData().notifyDataChanged();
+                        chart.notifyDataSetChanged();
+                        chart.invalidate();
+                    }
                 }
-
             }
 
 
             @Override
-            public void onFailure(Call<ForecastHourlyResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<ForecastHourlyResponse> call, @NonNull Throwable t) {
                 Log.d("log", t.getLocalizedMessage());
             }
         });

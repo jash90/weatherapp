@@ -1,9 +1,5 @@
 package com.example.ideo7.weather.model;
 
-/**
- * Created by ideo7 on 14.07.2017.
- */
-
 public class Sys {
     private Integer type;
     private Integer id;

@@ -1,8 +1,5 @@
 package com.example.ideo7.weather.model;
 
-/**
- * Created by ideo7 on 18.07.2017.
- */
 
 public class Temp {
     private Double day;

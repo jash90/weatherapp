@@ -12,14 +12,12 @@ import com.github.mikephil.charting.utils.MPPointF;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by ideo7 on 18.07.2017.
- */
 
 public class MyMarkerView extends MarkerView {
 
     @BindView(R.id.tvContent)
     TextView tvContent;
+
 
     public MyMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
@@ -27,8 +25,6 @@ public class MyMarkerView extends MarkerView {
         ButterKnife.bind(this);
     }
 
-    // callbacks everytime the MarkerView is redrawn, can be used to update the
-    // content (user-interface)
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
 

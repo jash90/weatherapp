@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -97,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
                 new SwipeDismissRecyclerViewTouchListener.DismissCallbacks() {
                     @Override
                     public boolean canDismiss(int position) {
-                        //recyclerView.removeViewAt(position);
                         return true;
                     }
 
@@ -105,24 +105,22 @@ public class MainActivity extends AppCompatActivity {
                     public void onDismiss(View view) {
                         String text = ((TextView) view.findViewById(R.id.city)).getText().toString();
                         StringTokenizer stringTokenizer = new StringTokenizer(text, ",");
-                        if (text != null) {
+                        if (!text.isEmpty()) {
                             for (int i = 0; i < forecastNowWeatherResponses.size(); i++) {
                                 if (forecastNowWeatherResponses.get(i).getName().equals(stringTokenizer.nextToken())
                                         && forecastNowWeatherResponses.get(i).getSys().getCountry().equals(stringTokenizer.nextToken())) {
-                                    if (((CheckBox) view.findViewById(R.id.checked)).isChecked())
-                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.removedFromFavorites),
-                                                forecastNowWeatherResponses.get(i).getName()), Toast.LENGTH_SHORT).show();
+
+                                    if (((CheckBox) view.findViewById(R.id.checked)).isChecked()) {
+                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.removedFromFavorites), forecastNowWeatherResponses.get(i).getName()), Toast.LENGTH_SHORT).show();
+                                    }
                                     text = forecastNowWeatherResponses.get(i).getName() + "," + forecastNowWeatherResponses.get(i).getSys().getCountry();
                                     forecastNowWeatherResponses.remove(i);
                                 }
                             }
-                            //XLog.d(citys.toString());
+
                             citys.remove(text);
                             favoritescitys.remove(text);
-                            //XLog.d(favoritescitys.toString());
                             nowWeatherAdapter.notifyDataSetChanged();
-                            //XLog.d(forecastNowWeatherResponses.toString());
-                            //XLog.d(((TextView) view.findViewById(R.id.city)).getText().toString());
                         }
                     }
                 })
@@ -135,9 +133,11 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("city", forecastNowWeatherResponses.get(position).getName());
                             intent.putExtra("country", forecastNowWeatherResponses.get(position).getSys().getCountry());
                             intent.putExtra("idcity", forecastNowWeatherResponses.get(position).getId());
+
                             Gson gson = new Gson();
                             String favorites = gson.toJson(favoritescitys);
                             sharedEditor.putString("city", forecastNowWeatherResponses.get(position).getName() + "," + forecastNowWeatherResponses.get(position).getSys().getCountry());
+                            sharedEditor.apply();
                             sharedEditor.commit();
                             intent.putExtra("favorites", favorites);
                             startActivity(intent);
@@ -148,51 +148,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void searchWeather(Integer city) {
-        OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
-        Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city, getResources().getString(R.string.appid), getResources().getString(R.string.units), Convert.getlang());
-        call.enqueue(new Callback<ForecastNowWeatherResponse>() {
-            @Override
-            public void onResponse(Call<ForecastNowWeatherResponse> call, retrofit2.Response<ForecastNowWeatherResponse> response) {
-                if (response.isSuccessful()) {
-                    if (!citys.contains(response.body().getName() + "," + response.body().getSys().getCountry())) {
-                        forecastNowWeatherResponses.add(0, response.body());
-                        nowWeatherAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.cityIsOnTheList, Toast.LENGTH_SHORT).show();
-                    }
-                    citys.add(response.body().getName() + "," + response.body().getSys().getCountry());
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ForecastNowWeatherResponse> call, Throwable t) {
-                Log.d("error", t.getLocalizedMessage());
-            }
-        });
-    }
-
     public void searchWeather(String city) {
         OpenWeather openWeather = ServiceGenerator.createService(OpenWeather.class);
         Call<ForecastNowWeatherResponse> call = openWeather.getWeather(city, getResources().getString(R.string.appid), getResources().getString(R.string.units), Convert.getlang());
         call.enqueue(new Callback<ForecastNowWeatherResponse>() {
             @Override
-            public void onResponse(Call<ForecastNowWeatherResponse> call, retrofit2.Response<ForecastNowWeatherResponse> response) {
+            public void onResponse(@NonNull Call<ForecastNowWeatherResponse> call, @NonNull retrofit2.Response<ForecastNowWeatherResponse> response) {
                 if (response.isSuccessful()) {
-                    if (!citys.contains(response.body().getName() + "," + response.body().getSys().getCountry())) {
-                        forecastNowWeatherResponses.add(0, response.body());
-                        nowWeatherAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.cityIsOnTheList, Toast.LENGTH_SHORT).show();
-                    }
-                    citys.add(response.body().getName() + "," + response.body().getSys().getCountry());
+                    if (response.body() != null) {
+                        if (!citys.contains(response.body().getName() + "," + response.body().getSys().getCountry())) {
+                            forecastNowWeatherResponses.add(0, response.body());
+                            nowWeatherAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(getApplicationContext(), R.string.cityIsOnTheList, Toast.LENGTH_SHORT).show();
+                        }
+                        citys.add(response.body().getName() + "," + response.body().getSys().getCountry());
 
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<ForecastNowWeatherResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<ForecastNowWeatherResponse> call, @NonNull Throwable t) {
                 Log.d("error", t.getLocalizedMessage());
             }
         });
@@ -201,15 +178,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
         sharedEditor.putString("json", new Gson().toJson(favoritescitys));
         sharedEditor.putString("citys", new Gson().toJson(citys));
-        Log.d("dd", "ondestroy");
         sharedEditor.commit();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         sharedEditor.putString("citys", null);
         sharedEditor.commit();
     }
@@ -217,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+
         Gson gson = new Gson();
         String listCitys = sharedPreferences.getString("citys", null);
         if (listCitys != null) {
@@ -226,5 +205,6 @@ public class MainActivity extends AppCompatActivity {
             }
             citys.addAll(arrayList);
         }
+
     }
 }

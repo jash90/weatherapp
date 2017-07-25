@@ -5,9 +5,7 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
 import java.util.ArrayList;
 
-/**
- * Created by ideo7 on 18.07.2017.
- */
+
 public class LabelFormatter implements IAxisValueFormatter {
     private final ArrayList<String> mLabels;
 

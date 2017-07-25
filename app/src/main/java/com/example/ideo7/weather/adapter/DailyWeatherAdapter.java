@@ -19,19 +19,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by ideo7 on 19.07.2017.
- */
-
 public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapter.MyViewHolder> {
 
-    ArrayList<DailyWeather> list;
+    private ArrayList<DailyWeather> list;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.date)
         TextView date;
         @BindView(R.id.today)
@@ -51,7 +48,7 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
         @BindView(R.id.layout)
         LinearLayout linearLayout;
 
-        public MyViewHolder(View itemView) {
+        private MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -73,22 +70,27 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
     @Override
     public void onBindViewHolder(DailyWeatherAdapter.MyViewHolder holder, int position) {
         final DailyWeather dailyWeather = list.get(position);
+
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("EEE dd MMM");
+        SimpleDateFormat format = new SimpleDateFormat("EEE dd MMM", Locale.getDefault());
         format.setTimeZone(cal.getTimeZone());
-        ;
         holder.date.setText(format.format(new Date(dailyWeather.getDt() * 1000L)));
+
         Picasso.with(holder.itemView.getContext())
                 .load(String.format("https://openweathermap.org/img/w/%s.png", dailyWeather.getWeather().get(0).getIcon()))
                 .resize(100, 100)
                 .into(holder.icon);
-        holder.tempDay.setText(String.format("%.2f %s", dailyWeather.getTemp().getMorn(), holder.itemView.getContext().getResources().getString(R.string.degrees)));
-        holder.tempNight.setText(String.format("%.2f %s", dailyWeather.getTemp().getNight(), holder.itemView.getContext().getResources().getString(R.string.degrees)));
-        holder.cloud.setText(String.format("%s: %d %%,  %.2f hpa", holder.itemView.getResources().getString(R.string.clouds), dailyWeather.getClouds(), dailyWeather.getPressure()));
-        holder.wind.setText(String.format("%.2f m/s", dailyWeather.getSpeed()));
+
+        holder.tempDay.setText(String.format("%.2f %s".toLowerCase(), dailyWeather.getTemp().getMorn(), holder.itemView.getContext().getResources().getString(R.string.degrees)));
+
+        holder.tempNight.setText(String.format("%.2f %s".toLowerCase(), dailyWeather.getTemp().getNight(), holder.itemView.getContext().getResources().getString(R.string.degrees)));
+
+        holder.cloud.setText(String.format("%s: %d %%,  %.2f hpa".toLowerCase(), holder.itemView.getResources().getString(R.string.clouds), dailyWeather.getClouds(), dailyWeather.getPressure()));
+
+        holder.wind.setText(String.format("%.2f m/s".toLowerCase(), dailyWeather.getSpeed()));
 
         holder.description.setText(dailyWeather.getWeather().get(0).getDescription());
-        DateTime dateTime = new DateTime(dailyWeather.getDt() * 1000L);
+
         if (new DateTime(dailyWeather.getDt() * 1000L).toLocalDate().compareTo(DateTime.now().toLocalDate()) == 0) {
             holder.today.setVisibility(View.VISIBLE);
             holder.linearLayout.setBackgroundColor(Color.rgb(221, 221, 221));

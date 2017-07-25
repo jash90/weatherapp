@@ -1,10 +1,8 @@
 package com.example.ideo7.weather.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -40,10 +38,10 @@ public class DetailsActivity extends AppCompatActivity {
     ViewPager viewPager;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    private SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
-    private SectionsPagerAdapter pagerAdapter;
-    private Menu menu;
+    SectionsPagerAdapter pagerAdapter;
+    Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +52,12 @@ public class DetailsActivity extends AppCompatActivity {
         menu = toolbar.getMenu();
 
         toolbar.setBackgroundResource(R.color.colorPrimary);
-        toolbar.setOverflowIcon(ContextCompat.getDrawable(this,R.drawable.menu));
+        toolbar.setOverflowIcon(ContextCompat.getDrawable(this, R.drawable.menu));
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 sharedEditor.putString("city", item.toString());
+                sharedEditor.apply();
                 sharedEditor.commit();
                 Intent intent = new Intent();
                 intent.setAction("menu");
@@ -89,7 +88,9 @@ public class DetailsActivity extends AppCompatActivity {
             menu.add(s);
         }
 
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         tabHost.setType(MaterialTabHost.Type.FullScreenWidth);
         pagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -108,14 +109,15 @@ public class DetailsActivity extends AppCompatActivity {
 
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm){
+        private SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
+
             switch (position) {
                 case 0:
                     return new MainWeatherFragment();
@@ -137,6 +139,8 @@ public class DetailsActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
+
+
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:

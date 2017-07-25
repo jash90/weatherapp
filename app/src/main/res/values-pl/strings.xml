@@ -27,4 +27,5 @@
     <string name="clouds">zachmurzenie</string>
     <string name="search">Szukaj</string>
     <string name="addedToTheFavorites">%s dodane do ulubionych.</string>
+    <string name="emptyCity">Nazwa miasta jest pusta.</string>
 </resources>

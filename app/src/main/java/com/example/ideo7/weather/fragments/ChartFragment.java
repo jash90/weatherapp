@@ -16,21 +16,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ideo7.weather.R;
-import com.example.ideo7.weather.model.DailyWeather;
 
 import net.yanzm.mth.MaterialTabHost;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by ideo7 on 20.07.2017.
- */
 
 public class ChartFragment extends Fragment {
     @BindView(R.id.tabHost)
@@ -39,17 +35,18 @@ public class ChartFragment extends Fragment {
     ViewPager viewPager;
     @BindView(R.id.title)
     TextView title;
-    ArrayList<DailyWeather> dailyWeathers;
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor sharedEditor;
+
     private IntentFilter intentFilter = new IntentFilter("menu");
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
             sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
-            sharedEditor = sharedPreferences.edit();
             if (sharedPreferences.getString("city", null) != null) {
                 title.setText(String.format(getString(R.string.chartWeatherAndForecastIn), sharedPreferences.getString("city", null)));
+            } else {
+                Toast.makeText(getContext(), getResources().getString(R.string.emptyCity), Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -62,7 +59,6 @@ public class ChartFragment extends Fragment {
         ButterKnife.bind(this, v);
         tabHost.setType(MaterialTabHost.Type.FullScreenWidth);
         sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
-        sharedEditor = sharedPreferences.edit();
         if (sharedPreferences.getString("city", null) != null) {
             title.setText(String.format(getString(R.string.chartWeatherAndForecastIn), sharedPreferences.getString("city", null)));
         }

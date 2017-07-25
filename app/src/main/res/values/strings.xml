@@ -29,6 +29,7 @@
     <string name="today">Today</string>
     <string name="clouds">clouds</string>
     <string name="search">Search</string>
+    <string name="emptyCity">City name is empty.</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
