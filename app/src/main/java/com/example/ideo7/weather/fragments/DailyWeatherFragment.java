@@ -193,7 +193,7 @@ public class DailyWeatherFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<ForecastDailyResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

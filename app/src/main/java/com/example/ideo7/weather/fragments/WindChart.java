@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-
 import com.example.ideo7.weather.R;
 import com.example.ideo7.weather.api.OpenWeather;
 import com.example.ideo7.weather.api.ServiceGenerator;
@@ -181,7 +180,7 @@ public class WindChart extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<ForecastHourlyResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -1,6 +1,5 @@
 package com.example.ideo7.weather.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -27,7 +26,6 @@ import com.example.ideo7.weather.model.ForecastNowWeatherResponse;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private NowWeatherAdapter nowWeatherAdapter;
     private ArrayList<String> citys;
     private ArrayList<String> favoritescitys;
-    private SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedEditor;
 
     @Override
@@ -104,9 +102,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDismiss(View view) {
                         String text = ((TextView) view.findViewById(R.id.city)).getText().toString();
-                        if (!text.isEmpty() && text!=null) {
+                        if (!text.isEmpty()) {
                             for (int i = 0; i < forecastNowWeatherResponses.size(); i++) {
-                                if ((forecastNowWeatherResponses.get(i).getName()+","+forecastNowWeatherResponses.get(i).getSys().getCountry()).contains(text)) {
+                                if ((forecastNowWeatherResponses.get(i).getName() + "," + forecastNowWeatherResponses.get(i).getSys().getCountry()).contains(text)) {
 
                                     if (((CheckBox) view.findViewById(R.id.checked)).isChecked()) {
                                         Toast.makeText(getApplicationContext(), String.format(getString(R.string.removedFromFavorites), forecastNowWeatherResponses.get(i).getName()), Toast.LENGTH_SHORT).show();
@@ -166,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Call<ForecastNowWeatherResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getApplicationContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

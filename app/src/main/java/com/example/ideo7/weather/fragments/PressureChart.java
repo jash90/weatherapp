@@ -177,7 +177,7 @@ public class PressureChart extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<ForecastHourlyResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(),t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
