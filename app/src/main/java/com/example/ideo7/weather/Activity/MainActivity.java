@@ -126,13 +126,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .setIsVertical(false)
-                .setItemTouchCallback(
-                        new SwipeDismissRecyclerViewTouchListener.OnItemTouchCallBack() {
-                            @Override
-                            public void onTouch(int index) {
-                                // Do what you want when item be touched
-                            }
-                        })
                 .setItemClickCallback(new SwipeDismissRecyclerViewTouchListener.OnItemClickCallBack() {
                     @Override
                     public void onClick(int position) {
