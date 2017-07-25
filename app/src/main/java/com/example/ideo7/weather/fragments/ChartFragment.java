@@ -88,16 +88,14 @@ public class ChartFragment extends Fragment {
         return v;
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
                 case 0:
                     return new TemperatureChart();
@@ -114,7 +112,6 @@ public class ChartFragment extends Fragment {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 4;
         }
 

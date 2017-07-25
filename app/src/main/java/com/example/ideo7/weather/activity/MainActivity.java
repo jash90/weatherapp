@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<ForecastNowWeatherResponse> call, @NonNull retrofit2.Response<ForecastNowWeatherResponse> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
+                    if (response.body() != null && response.body().getName()!=null && response.body().getSys().getCountry()!=null) {
                         if (!citys.contains(response.body().getName() + "," + response.body().getSys().getCountry())) {
                             forecastNowWeatherResponses.add(0, response.body());
                             nowWeatherAdapter.notifyDataSetChanged();
@@ -187,7 +187,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Convert.hideSoftKeyboard(this);
-
     }
 }

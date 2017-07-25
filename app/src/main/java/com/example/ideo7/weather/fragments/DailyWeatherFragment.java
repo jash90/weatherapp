@@ -117,7 +117,7 @@ public class DailyWeatherFragment extends Fragment {
         call.enqueue(new Callback<ForecastDailyResponse>() {
             @Override
             public void onResponse(@NonNull Call<ForecastDailyResponse> call, @NonNull Response<ForecastDailyResponse> response) {
-                if (response.body().getList() != null) {
+                if (response.body() != null && response.body().getList()!=null) {
                     ArrayList<DailyWeather> list = response.body().getList();
                     ArrayList<Entry> tempvalues = new ArrayList<>();
                     ArrayList<BarEntry> rainvalues = new ArrayList<>();

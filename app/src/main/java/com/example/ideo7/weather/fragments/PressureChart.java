@@ -114,7 +114,7 @@ public class PressureChart extends Fragment {
         call.enqueue(new Callback<ForecastHourlyResponse>() {
             @Override
             public void onResponse(@NonNull Call<ForecastHourlyResponse> call, @NonNull Response<ForecastHourlyResponse> response) {
-                if (response.body().getList() != null) {
+                if (response.body() != null && response.body().getList() != null) {
                     ArrayList<HourlyWeather> hws = (ArrayList<HourlyWeather>) response.body().getList();
                     ArrayList<Entry> data = new ArrayList<>();
                     ArrayList<String> labels = new ArrayList<>();

@@ -161,8 +161,7 @@ public class MainWeatherFragment extends Fragment {
         call.enqueue(new Callback<ForecastHourlyResponse>() {
             @Override
             public void onResponse(@NonNull Call<ForecastHourlyResponse> call, @NonNull Response<ForecastHourlyResponse> response) {
-                if (response.body().getList() != null) {
-
+                if (response.body() != null && response.body().getList() != null) {
                     ArrayList<HourlyWeather> list = (ArrayList<HourlyWeather>) response.body().getList();
                     for (HourlyWeather hw : list) {
                         hourlyWeathers.add(hw);
@@ -266,7 +265,7 @@ public class MainWeatherFragment extends Fragment {
         call.enqueue(new Callback<ForecastDailyResponse>() {
             @Override
             public void onResponse(@NonNull Call<ForecastDailyResponse> call, @NonNull Response<ForecastDailyResponse> response) {
-                if (response.body().getList() != null) {
+                if (response.body()!= null && response.body().getList() != null) {
                     ArrayList<DailyWeather> list = response.body().getList();
                     for (DailyWeather dailyWeather : list) {
                         dailyWeathers.add(dailyWeather);
